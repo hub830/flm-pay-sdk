@@ -1,0 +1,31 @@
+allprojects {
+  repositories {
+    maven { url "http://192.168.10.10:8081/nexus/content/groups/public/" }
+    mavenCentral()
+  }
+}
+
+group = 'top.lemno'
+version = '0.0.1-SNAPSHOT'
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'eclipse'
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  task wrapper(type: Wrapper) { gradleVersion = '5.1.1' }
+  [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+  dependencies {
+    compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.4'
+
+    compile 'com.alibaba:fastjson:1.2.47'
+  }
+}

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: agent-task
+  redis:
+    host: 192.168.10.10
+    database: 6
+    password: redispassword
+  data:
+    mongodb:
+      uri: mongodb://user:123456@192.168.10.10:27017/user?authMechanism=SCRAM-SHA-1
+
+fox:
+  security:
+    oauth2:
+      clients[0]:
+        clientId: fox
+        clientSecret: foxsecret
+        accessTokenValidateSeconds: 3600

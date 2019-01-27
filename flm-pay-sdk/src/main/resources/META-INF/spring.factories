@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+top.lemna.security.app.config.PasswordEncoderConfiguration,\
+top.lemna.security.app.config.FoxAuthorizationServerConfig,\
+top.lemna.security.app.config.FoxResourceServerConfig,\
+top.lemna.security.app.config.WebSecurityConfiguration

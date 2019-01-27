@@ -1,0 +1,4 @@
+rootProject.name = 'flm-pay-sdk'
+
+include 'flm-pay-sdk'
+include 'flm-pay-sdk-demo'
