@@ -25,11 +25,11 @@ public class AlphaParse extends FieldParse {
     try {
       String _v = new String(buf, pos, length, encoding);
       if (custom == null) {
-        AlphaValue<?> alphaValue = new AlphaValue<>(_v.trim(), null, length, encoding);
+        AlphaValue<?> alphaValue = new AlphaValue<>(_v.trim(), null, length);
         return alphaValue;
       } else {
         T decoded = custom.decodeField(_v, encoding);
-        AlphaValue<?> alphaValue = new AlphaValue<>(decoded, custom, length, encoding);
+        AlphaValue<?> alphaValue = new AlphaValue<>(decoded, custom, length);
         return alphaValue;
       }
     } catch (StringIndexOutOfBoundsException ex) {

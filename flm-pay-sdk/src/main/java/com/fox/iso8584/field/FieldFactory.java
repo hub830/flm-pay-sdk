@@ -32,7 +32,7 @@ import com.fox.iso8584.field.value.TimeValue;
 
 
 public class FieldFactory {
- 
+
 
 
   /**
@@ -42,8 +42,8 @@ public class FieldFactory {
    * @param value 值
    * @return
    */
-  public static <T> FieldValue<T> getField(FieldType type, T value,String encoding) {
-    return getField(type, value, null, 0, false,encoding);
+  public static <T> FieldValue<T> getField(FieldType type, T value) {
+    return getField(type, value, null, 0, false);
   }
 
   /**
@@ -54,8 +54,8 @@ public class FieldFactory {
    * @param length 字段长度，变长字段 及 日期类型字段传0
    * @return
    */
-  public static <T> FieldValue<T> getField(FieldType type, T value, int length,String encoding) {
-    return getField(type, value, null, length, false,encoding);
+  public static <T> FieldValue<T> getField(FieldType type, T value, int length) {
+    return getField(type, value, null, length, false);
   }
 
   /**
@@ -69,27 +69,27 @@ public class FieldFactory {
    * @param forceStringEncoding 是否对文本模式下的可变长度字段的长度标头进行解码
    * @return
    */
-  public static <T> FieldValue<T> getField(FieldType type, T value, CustomField<T> encoder, int length,
-      boolean binaryField,String encoding) {
+  public static <T> FieldValue<T> getField(FieldType type, T value, CustomField<T> encoder,
+      int length, boolean binaryField) {
     switch (type) {
       case ALPHA:
-        return new AlphaValue<T>(value, encoder, length, encoding);
+        return new AlphaValue<T>(value, encoder, length);
       case AMOUNT:
-        return new AmountValue<T>(value, encoder, encoding);
+        return new AmountValue<T>(value, encoder);
       case BINARY:
-        return new BinaryValue<T>(value, encoder, length, encoding);
+        return new BinaryValue<T>(value, encoder, length);
       case DATE10:
-        return new Date10Value<T>(value, encoder, encoding);
+        return new Date10Value<T>(value, encoder);
       case DATE12:
         break;
       case DATE14:
         break;
       case DATE4:
-        return new Date4Value<T>(value, encoder, encoding);
+        return new Date4Value<T>(value, encoder);
       case DATE6:
         break;
       case DATE_EXP:
-        return new DateExpValue<T>(value, encoder, encoding);
+        return new DateExpValue<T>(value, encoder);
       case LLBCDBIN:
         break;
       case LLBIN:
@@ -97,7 +97,7 @@ public class FieldFactory {
       case LLLBCDBIN:
         break;
       case LLLBIN:
-        return new LllBinVarValue<T>(value, encoder, encoding);
+        return new LllBinVarValue<T>(value, encoder);
       case LLLLBCDBIN:
         break;
       case LLLLBIN:
@@ -105,13 +105,13 @@ public class FieldFactory {
       case LLLLVAR:
         break;
       case LLLVAR:
-        return new LllvarValue<T>(value, encoder, encoding);
+        return new LllvarValue<T>(value, encoder);
       case LLVAR:
-        return new LlvarValue<T>(value, encoder, encoding);
+        return new LlvarValue<T>(value, encoder);
       case NUMERIC:
-        return new NumericValue<T>(value, encoder, length, encoding);
+        return new NumericValue<T>(value, encoder, length);
       case TIME:
-        return new TimeValue<T>(value, encoder, encoding);
+        return new TimeValue<T>(value, encoder);
     }
     throw new FieldTypeNotSupportException(type);
   }

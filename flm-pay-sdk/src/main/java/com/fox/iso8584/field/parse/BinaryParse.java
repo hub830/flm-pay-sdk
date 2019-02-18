@@ -26,7 +26,7 @@ public class BinaryParse extends FieldParse {
     byte[] _v = new byte[length];
     System.arraycopy(buf, pos, _v, 0, length);
     if (custom == null) {
-      BinaryValue<?> binaryValue = new BinaryValue<>(_v, null, length, encoding);
+      BinaryValue<?> binaryValue = new BinaryValue<>(_v, null, length);
 
       return binaryValue;
 
@@ -34,7 +34,7 @@ public class BinaryParse extends FieldParse {
       String v = new String(buf, pos, length * 2, encoding);
       T dec = custom.decodeField(v, encoding);
 
-      return new BinaryValue<>(dec, custom, length, encoding);
+      return new BinaryValue<>(dec, custom, length);
     }
   }
 }

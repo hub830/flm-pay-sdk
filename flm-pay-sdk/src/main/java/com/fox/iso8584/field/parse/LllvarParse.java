@@ -40,12 +40,12 @@ public class LllvarParse extends FieldParse {
     }
     if (custom == null) {
 
-      LllvarValue<?> lllvarValue = new LllvarValue<>(_v, null, encoding);
+      LllvarValue<?> lllvarValue = new LllvarValue<>(_v, null);
 
       return lllvarValue;
     } else {
       T decoded = custom.decodeField(_v, encoding);
-      LllvarValue<?> lllvarValue = new LllvarValue<>(decoded, custom, encoding);
+      LllvarValue<?> lllvarValue = new LllvarValue<>(decoded, custom);
       return lllvarValue;
     }
   }

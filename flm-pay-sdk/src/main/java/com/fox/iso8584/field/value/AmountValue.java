@@ -14,21 +14,18 @@ import com.fox.iso8584.field.FieldType;
  */
 public class AmountValue<T> extends AbstractFieldValue<T> {
 
-
-
-  public AmountValue(T value, CustomField<T> encoder, String encoding) {
-    super(FieldType.AMOUNT, value, encoder, 0, encoding);
+  public AmountValue(T value, CustomField<T> encoder) {
+    super(FieldType.AMOUNT, value, encoder, 0);
   }
 
   @Override
-  public byte[] format() throws UnsupportedEncodingException {
+  public byte[] format(String charset) throws UnsupportedEncodingException {
     BigDecimal v = (BigDecimal) value;
-    return String.format("%012d", v.movePointRight(2).longValue()).getBytes(encoding);
+    return String.format("%012d", v.movePointRight(2).longValue()).getBytes(charset);
   }
 
   @Override
-  public int getValueLength() { 
-
+  public int getValueLength(String charset) {
     return 12;
   }
 

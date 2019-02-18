@@ -15,12 +15,12 @@ public abstract class DatetimeValue<T> extends AbstractFieldValue<T> {
 
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  public DatetimeValue(FieldType type, T value, CustomField<T> encoder, String encoding) {
-    super(type, value, encoder, 0, encoding);
+  public DatetimeValue(FieldType type, T value, CustomField<T> encoder) {
+    super(type, value, encoder, 0);
   }
 
   @Override
-  protected byte[] format() {
+  protected byte[] format(String charset) {
     SimpleDateFormat sdf = getSimpleDateFormat();
     return sdf.format(value).getBytes();
   }

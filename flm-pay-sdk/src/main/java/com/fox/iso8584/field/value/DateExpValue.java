@@ -13,8 +13,8 @@ import com.fox.iso8584.field.FieldType;
 public class DateExpValue<T> extends DatetimeValue<T> {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
 
-  public DateExpValue(T value, CustomField<T> encoder, String encoding) {
-    super(FieldType.DATE_EXP, value, encoder, encoding);
+  public DateExpValue(T value, CustomField<T> encoder) {
+    super(FieldType.DATE_EXP, value, encoder);
   }
 
   @Override
@@ -23,7 +23,7 @@ public class DateExpValue<T> extends DatetimeValue<T> {
   }
 
   @Override
-  public int getValueLength() {
+  public int getValueLength(String charset) {
     return 4;
   }
 }

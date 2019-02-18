@@ -15,21 +15,20 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
 
   protected int length;
 
-  protected String encoding;
+  // protected String encoding;
 
-//  protected boolean binary;
+  // protected boolean binary;
 
   public AbstractFieldValue() {}
 
-  public AbstractFieldValue(FieldType type, T value, CustomField<T> encoder, int length,
-      String encoding) {
+  public AbstractFieldValue(FieldType type, T value, CustomField<T> encoder, int length) {
     super();
     this.type = type;
     this.value = value;
     this.encoder = encoder;
     this.length = length;
-    this.encoding = encoding;
-//    this.binary = binary;
+    // this.encoding = encoding;
+    // this.binary = binary;
   }
 
   public FieldType getType() {
@@ -47,21 +46,17 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
   public int getLength() {
     return length;
   }
-
-  @Override
-  public String getEncoding() {
-    return encoding;
-  }
-/*
-  public boolean isBinary() {
-    return binary;
-  }*/
+  /*
+   * @Override public String getEncoding() { return encoding; }
+   * 
+   * public boolean isBinary() { return binary; }
+   */
 
   /**
    * 对于不可变长字段，值 的长度直接为其定义时设置的长度
    */
   @Override
-  public int getValueLength() { 
+  public int getValueLength(String charset) {
     return length;
   }
 
@@ -73,11 +68,13 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
    * @return
    * @throws UnsupportedEncodingException
    */
-  protected abstract byte[] format() throws UnsupportedEncodingException;
+  protected abstract byte[] format(String charset) throws UnsupportedEncodingException;
 
   @Override
-  public void write(OutputStream out) throws UnsupportedEncodingException, IOException {
-    byte[] data = encoder == null ? format() : encoder.encodeField(value).getBytes();
+  public void write(OutputStream out, String charset)
+      throws UnsupportedEncodingException, IOException {
+    byte[] data =
+        encoder == null ? format(charset) : encoder.encodeField(value, charset).getBytes();
     out.write(data);
   }
 

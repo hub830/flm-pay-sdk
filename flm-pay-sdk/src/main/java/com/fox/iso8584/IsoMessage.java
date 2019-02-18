@@ -22,9 +22,7 @@ import org.apache.commons.codec.binary.Hex;
 public class IsoMessage {
 
   public final static int REQUEST_TYPE_LENGTH = 4;
-
-  public final static int HEAD_LENGTH = 46;
-
+  
   /** The message type. */
   protected int type;
 
@@ -78,11 +76,11 @@ public class IsoMessage {
    * 
    * @throws IOException
    */
-  public byte[] writeData() throws IOException {
+  public byte[] writeData(String charset) throws IOException {
 
-    byte[] bodyData = isoBody.writeData();
+    byte[] bodyData = isoBody.writeData(charset);
 
-    int totalLength = bodyData.length + HEAD_LENGTH + REQUEST_TYPE_LENGTH;
+    int totalLength = bodyData.length + IsoHeader.HEAD_LENGTH + REQUEST_TYPE_LENGTH;
     // 设置报文总长度
     isoHeader.setTotalLengtn(totalLength);
     /*
@@ -95,7 +93,7 @@ public class IsoMessage {
     bout.write(
         Hex.encodeHexString(mesageLength.getBytes(encoding)).toUpperCase().getBytes(encoding));
     // 输出 报文头
-    bout.write(Hex.encodeHexString(isoHeader.writeData()).toUpperCase().getBytes());
+    bout.write(Hex.encodeHexString(isoHeader.writeData(charset)).toUpperCase().getBytes());
     // 输出 报文类型
     String messageType = String.format("%04x", type);
     bout.write(

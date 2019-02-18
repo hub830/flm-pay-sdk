@@ -35,7 +35,7 @@ public class Date4Parse extends FieldParse {
     cal.set(Calendar.DATE, Integer.parseInt(new String(buf, pos+2, 2, encoding), 10));
      
 
-    Date4Value<?> date4Value = new Date4Value<>(cal.getTime(), null, encoding);
+    Date4Value<?> date4Value = new Date4Value<>(cal.getTime(), null);
     return date4Value;
     
     

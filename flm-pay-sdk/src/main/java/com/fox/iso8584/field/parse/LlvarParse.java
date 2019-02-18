@@ -46,13 +46,13 @@ public class LlvarParse extends FieldParse {
       _v = new String(buf, pos + 2, buf.length - pos - 2, encoding).substring(0, len);
     }
     if (custom == null) {
-      LlvarValue<?> value = new LlvarValue<>(_v, null, encoding);
+      LlvarValue<?> value = new LlvarValue<>(_v, null);
       return value;
       // return new IsoValue<>(type, _v, len, null);
     } else {
       T dec = custom.decodeField(_v, encoding);
 
-      return new LlvarValue<>(dec, custom, encoding);
+      return new LlvarValue<>(dec, custom);
     }
   }
 

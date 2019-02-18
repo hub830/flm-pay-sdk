@@ -18,14 +18,14 @@ import com.fox.iso8584.CustomField;
 class BinaryValueTest {
 
   private String value;
-  private String encoding;
+  private String charset;
   private int length;
   private CustomField encoder;
 
   @BeforeEach
   void setUp() throws Exception {
     value = "43A8BA686B2881C1";
-    encoding = "GBK";
+    charset = "GBK";
     length = 8;
     encoder = null;
   }
@@ -33,20 +33,20 @@ class BinaryValueTest {
   @Test
   void testFormat_binary() throws DecoderException {
     byte[] decodeHex = Hex.decodeHex(value);
-    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding);
+    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length);
     assertNotNull(binaryValue);
 
-    byte[] format = binaryValue.format();
+    byte[] format = binaryValue.format(charset);
     String encodeHex = Hex.encodeHexString(format).toUpperCase();
     assertEquals(value,encodeHex);
   }
 
   @Test
   void testFormat() throws DecoderException {
-    BinaryValue binaryValue = new BinaryValue(value, encoder, length, encoding);
+    BinaryValue binaryValue = new BinaryValue(value, encoder, length);
     assertNotNull(binaryValue);
 
-    byte[] format = binaryValue.format();
+    byte[] format = binaryValue.format(charset);
     String encodeHex = Hex.encodeHexString(format).toUpperCase();
     assertEquals(value,encodeHex);
   }
@@ -54,7 +54,7 @@ class BinaryValueTest {
   @Test
   void testToString_binary() throws DecoderException {
     byte[] decodeHex = Hex.decodeHex(value);
-    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding);
+    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length);
     assertNotNull(binaryValue);
 
     String toString = binaryValue.toString();

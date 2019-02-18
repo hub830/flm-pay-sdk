@@ -41,7 +41,6 @@ public class IsoBody {
   private FieldValue[] fields = new FieldValue[129];
   /** Flag to enforce secondary bitmap even if empty. */
   private boolean forceb2;
-  private String encoding = System.getProperty("file.encoding");
 
   /** Creates a new empty message with no values set. */
   public IsoBody() {
@@ -60,24 +59,6 @@ public class IsoBody {
   public boolean getForceSecondaryBitmap() {
     return forceb2;
   }
-
-  /** Sets the encoding to use. */
-  public void setCharacterEncoding(String value) {
-    if (value == null) {
-      throw new IllegalArgumentException("Cannot set null encoding.");
-    }
-    encoding = value;
-  }
-
-  /**
-   * Returns the character encoding for Strings inside the message. Default is taken from the
-   * file.encoding system property.
-   */
-  public String getCharacterEncoding() {
-    return encoding;
-  }
-
-
 
   /**
    * Returns the stored value in the field, without converting or formatting it.
@@ -184,7 +165,7 @@ public class IsoBody {
     return false;
   }
 
-  public byte[] writeData() throws UnsupportedEncodingException, IOException {
+  public byte[] writeData(String charset) throws UnsupportedEncodingException, IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
     byte[] bitmap = writeBinBitmap();
@@ -195,7 +176,7 @@ public class IsoBody {
       e.printStackTrace();
     }
     // 输出消息体
-    byte[] body = writeBody();
+    byte[] body = writeBody(charset);
     try {
       bout.write(body);
     } catch (IOException e) {
@@ -211,13 +192,13 @@ public class IsoBody {
    * @throws IOException
    * @throws UnsupportedEncodingException
    */
-  byte[] writeBody() throws UnsupportedEncodingException, IOException {
+  byte[] writeBody(String charset) throws UnsupportedEncodingException, IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     // Fields
     for (int i = 2; i < 129; i++) {
       FieldValue<?> v = fields[i];
       if (v != null) {
-        v.write(bout);
+        v.write(bout, charset);
       }
     }
     return bout.toByteArray();

@@ -13,12 +13,12 @@ import com.fox.iso8584.field.FieldType;
 public class NumericValue<T> extends AbstractFieldValue<T> {
 
 
-  public NumericValue(T value, CustomField<T> encoder, int length, String encoding) {
-    super(FieldType.NUMERIC, value, encoder, length, encoding);
+  public NumericValue(T value, CustomField<T> encoder, int length) {
+    super(FieldType.NUMERIC, value, encoder, length);
   }
 
   @Override
-  protected byte[] format() {
+  protected byte[] format(String charset) {
     if (value instanceof Number) {
       String x = String.format(String.format("%%0%dd", length), value);
       if (x.length() > length) {

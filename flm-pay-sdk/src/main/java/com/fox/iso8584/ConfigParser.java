@@ -139,8 +139,7 @@ public class ConfigParser {
       }
 
       IsoBody m = new IsoBody();
-      // m.setType(type);
-      m.setCharacterEncoding(mfact.getCharacterEncoding());
+
       NodeList fields = elem.getElementsByTagName("field");
       for (int j = 0; j < fields.getLength(); j++) {
         Element f = (Element) fields.item(j);
@@ -161,7 +160,6 @@ public class ConfigParser {
    */
   protected static <M extends IsoBody> FieldValue<?> getTemplateField(Element f,
       MessageFactory mfact, boolean toplevel) {
-    final int num = Integer.parseInt(f.getAttribute("num"));
     final String typedef = f.getAttribute("type");
     int length = 0;
     if (f.getAttribute("length").length() > 0) {
@@ -174,14 +172,9 @@ public class ConfigParser {
     } else {
       v = f.getChildNodes().item(0).getNodeValue();
     }
-    final CustomField<Object> cf = toplevel ? mfact.getCustomField(num) : null;
-    FieldValue<?> rv;
-    if (cf == null) {
-      rv = FieldFactory.getField(itype, v, length, "GBK");
-    } else {
-      rv = FieldFactory.getField(itype, cf.decodeField(v, "GBK"), length, "GBK");
-    }
 
+    FieldValue<?> rv;
+    rv = FieldFactory.getField(itype, v, length);
     return rv;
   }
 

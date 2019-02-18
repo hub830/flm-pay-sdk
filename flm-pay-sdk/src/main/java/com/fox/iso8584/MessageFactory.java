@@ -80,28 +80,12 @@ public class MessageFactory {
    */
   private String destinationId;
 
-  private String encoding = System.getProperty("file.encoding");
-
- 
-
   public void setSourceStationId(String sourceStationId) {
     this.sourceStationId = sourceStationId;
   }
 
   public void setDestinationId(String destinationId) {
     this.destinationId = destinationId;
-  }
-
-  /**
-   * Returns the encoding used to parse ALPHA, LLVAR and LLLVAR fields. The default is the
-   * file.encoding system property.
-   */
-  public String getCharacterEncoding() {
-    return encoding;
-  }
-
-  public void setCharacterEncoding(String encoding) {
-    this.encoding = encoding;
   }
 
   /**
@@ -179,7 +163,7 @@ public class MessageFactory {
     IsoBody templ = typeTemplates.get(type);
     IsoBody body = createIsoBody(templ);
 
-    IsoHeader header = new IsoHeader(sourceStationId, destinationId, encoding);
+    IsoHeader header = new IsoHeader(sourceStationId, destinationId);
 
     IsoMessage message = new IsoMessage(type, header, body);
     return message;
@@ -195,7 +179,7 @@ public class MessageFactory {
    * @param isoHeaderLength The expected length of the ISO header, after which the message type and
    *        the rest of the message must come.
    */
-  public IsoMessage parseMessage(byte[] buf, int isoHeaderLength)
+  public IsoMessage parseMessage(byte[] buf, int isoHeaderLength, String charset)
       throws ParseException, UnsupportedEncodingException {
     final int minlength = isoHeaderLength + 4;
     if (buf.length < minlength) {
@@ -207,8 +191,6 @@ public class MessageFactory {
         | ((buf[isoHeaderLength + 2] - 48) << 4) | (buf[isoHeaderLength + 3] - 48);
     
     IsoBody body = new IsoBody();
-
-    body.setCharacterEncoding(encoding);
 
     // Parse the bitmap (primary first)
     final BitSet bs = new BitSet(64);
@@ -246,10 +228,10 @@ public class MessageFactory {
       if (bs.get(i - 1)) {
         CustomField<?> decoder = getCustomField(i);
 
-        FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, encoding);
+        FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, charset);
         body.setField(i, field);
 
-        pos += field.getValueLength();
+        pos += field.getValueLength(charset);
       }
 
     }
@@ -303,7 +285,6 @@ public class MessageFactory {
 
     IsoBody body = new IsoBody();
     body.setForceSecondaryBitmap(forceb2);
-    body.setCharacterEncoding(encoding);
 
     // Copy the values from the template
     if (templ != null) {
@@ -316,10 +297,10 @@ public class MessageFactory {
       }
     }
     if (traceGen != null) {
-      body.setField(11, FieldFactory.getField(FieldType.NUMERIC, traceGen.nextTrace(), 6,encoding));
+      body.setField(11, FieldFactory.getField(FieldType.NUMERIC, traceGen.nextTrace(), 6));
     }
     if (setDate) {
-      body.setField(7, FieldFactory.getField(FieldType.DATE10, new Date(),encoding));
+      body.setField(7, FieldFactory.getField(FieldType.DATE10, new Date()));
     }
 
     return body;

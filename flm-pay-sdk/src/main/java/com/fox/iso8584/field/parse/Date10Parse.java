@@ -34,7 +34,7 @@ public class Date10Parse extends FieldParse {
     cal.set(Calendar.MINUTE, Integer.parseInt(new String(buf, pos+6, 2, encoding), 10));
     cal.set(Calendar.SECOND, Integer.parseInt(new String(buf, pos+8, 2, encoding), 10));
     cal.set(Calendar.MILLISECOND, 0);
-    Date10Value<?> date10Value = new Date10Value<>(cal.getTime(), null, encoding);
+    Date10Value<?> date10Value = new Date10Value<>(cal.getTime(), null);
 
     return date10Value;
 

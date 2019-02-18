@@ -83,16 +83,16 @@ public class CompositeField implements CustomField<CompositeField> {
   }
 
   @Override
-  public CompositeField decodeField(String value, String encoding) {
+  public CompositeField decodeField(String value, String charset) {
     @SuppressWarnings("rawtypes")
     List<FieldValue> vals = new ArrayList<>(parsers.size());
     byte[] buf = value.getBytes();
     int pos = 0;
     try {
       for (FieldParseInfo fpi : parsers) {
-        FieldValue<?> v = FieldParseFactory.parse(fpi, buf, pos, null, encoding);
+        FieldValue<?> v = FieldParseFactory.parse(fpi, buf, pos, null, charset);
         if (v != null) {
-          pos += v.getValueLength();
+          pos += v.getValueLength(charset);
           vals.add(v);
         }
       }
@@ -107,17 +107,15 @@ public class CompositeField implements CustomField<CompositeField> {
 
 
   @Override
-  public String encodeField(CompositeField value) {
+  public String encodeField(CompositeField value, String charset) {
     try {
       String encoding = null;
       final ByteArrayOutputStream bout = new ByteArrayOutputStream();
       for (FieldValue<?> v : value.getValues()) {
-        v.write(bout);
-        if (encoding == null)
-          encoding = v.getEncoding();
+        v.write(bout,charset);
       }
       final byte[] buf = bout.toByteArray();
-      return new String(buf, encoding == null ? "UTF-8" : encoding);
+      return new String(buf, encoding == null ? "UTF-8" : charset);
     } catch (IOException ex) {
       log.error("Encoding text CompositeField", ex);
       return "";

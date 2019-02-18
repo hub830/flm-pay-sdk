@@ -14,13 +14,12 @@ import com.solab.iso8583.util.HexCodec;
 public class BinaryValue<T> extends AbstractFieldValue<T> {
 
 
-  public BinaryValue(T value, CustomField<T> encoder, int length, String encoding
-      ) {
-    super(FieldType.BINARY, value, encoder, length, encoding);
+  public BinaryValue(T value, CustomField<T> encoder, int length) {
+    super(FieldType.BINARY, value, encoder, length);
   }
 
   @Override
-  protected byte[] format() {
+  protected byte[] format(String charset) {
     byte[] v;
 
     v = formatBinary();

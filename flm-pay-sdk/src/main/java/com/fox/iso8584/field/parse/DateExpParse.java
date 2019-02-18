@@ -35,7 +35,7 @@ public class DateExpParse extends FieldParse {
             + Integer.parseInt(new String(buf, pos, 2, encoding), 10));
     cal.set(Calendar.MONTH, Integer.parseInt(new String(buf, pos+2, 2, encoding), 10)-1); 
 
-    DateExpValue<?> dateExpValue = new DateExpValue<>(cal.getTime(), null, encoding);
+    DateExpValue<?> dateExpValue = new DateExpValue<>(cal.getTime(), null);
     
     return dateExpValue;
   }

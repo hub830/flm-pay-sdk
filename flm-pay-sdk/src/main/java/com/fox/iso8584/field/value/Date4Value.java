@@ -13,8 +13,8 @@ import com.fox.iso8584.field.FieldType;
 public class Date4Value<T> extends DatetimeValue<T> {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("MMdd");
 
-  public Date4Value(T value, CustomField<T> encoder, String encoding) {
-    super(FieldType.DATE4, value, encoder, encoding);
+  public Date4Value(T value, CustomField<T> encoder) {
+    super(FieldType.DATE4, value, encoder);
   }
 
   @Override
@@ -23,7 +23,7 @@ public class Date4Value<T> extends DatetimeValue<T> {
   }
 
   @Override
-  public int getValueLength() {
+  public int getValueLength(String charset) {
     return 4;
   }
 }

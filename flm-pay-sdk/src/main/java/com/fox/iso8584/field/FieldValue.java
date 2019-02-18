@@ -13,7 +13,7 @@ public interface FieldValue<T> {
    * 
    * @return
    */
-   int getValueLength();
+  int getValueLength(String charset);
 
   /**
    * 获得字段类型
@@ -43,7 +43,7 @@ public interface FieldValue<T> {
    * 
    * @return
    */
-  String getEncoding();
+  // String getEncoding();
 
 
   /**
@@ -60,7 +60,7 @@ public interface FieldValue<T> {
    * @throws IOException
    * @throws UnsupportedEncodingException
    */
-  void write(OutputStream out) throws UnsupportedEncodingException, IOException;
+  void write(OutputStream out, String charset) throws UnsupportedEncodingException, IOException;
 
   FieldValue<T> clone();
 

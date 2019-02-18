@@ -13,8 +13,8 @@ import com.fox.iso8584.field.FieldType;
 public class TimeValue<T> extends DatetimeValue<T> {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
 
-  public TimeValue(T value, CustomField<T> encoder, String encoding) {
-    super(FieldType.TIME, value, encoder, encoding);
+  public TimeValue(T value, CustomField<T> encoder) {
+    super(FieldType.TIME, value, encoder);
   }
 
   @Override
@@ -23,7 +23,7 @@ public class TimeValue<T> extends DatetimeValue<T> {
   }
 
   @Override
-  public int getValueLength() {
+  public int getValueLength(String charset) {
     return 6;
   }
 }

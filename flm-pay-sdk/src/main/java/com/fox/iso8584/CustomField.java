@@ -22,7 +22,7 @@ package com.fox.iso8584;
  */
 public interface CustomField<T> {
 
-  T decodeField(String value, String encoding);
+  T decodeField(String value, String charset);
 
-  String encodeField(T value);
+  String encodeField(T value, String charset);
 }

@@ -26,7 +26,7 @@ public class AmountParse extends FieldParse {
  
     String c = new String(buf, pos, 12, encoding);
     try {
-       AmountValue<?> amountValue = new AmountValue<>(new BigDecimal(c).movePointLeft(2), null,  encoding);
+       AmountValue<?> amountValue = new AmountValue<>(new BigDecimal(c).movePointLeft(2), null);
        return amountValue;
     } catch (NumberFormatException ex) {
         throw new ParseException(String.format("Cannot read amount '%s' pos %d",

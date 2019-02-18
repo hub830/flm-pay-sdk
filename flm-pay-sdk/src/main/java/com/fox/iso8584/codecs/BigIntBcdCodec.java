@@ -62,7 +62,7 @@ public class BigIntBcdCodec implements CustomBinaryField<BigInteger> {
   }
 
   @Override
-  public String encodeField(BigInteger value) {
+  public String encodeField(BigInteger value, String charset) {
     return value.toString(10);
   }
 

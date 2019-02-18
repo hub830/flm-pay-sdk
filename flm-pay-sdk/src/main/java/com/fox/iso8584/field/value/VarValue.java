@@ -18,25 +18,23 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
 
   public VarValue() {}
 
-  public VarValue(FieldType type, T value, CustomField<T> encoder, String encoding) {
-    super(type, value, encoder, 0, encoding);// 对于可变长字段，长度预设为0
-    // 根据内容的实际长度去重设长度字段
-    length = encoder == null ? value.toString().length() : encoder.encodeField(value).length();
-    // this.forceStringEncoding = forceStringEncoding;
+  public VarValue(FieldType type, T value, CustomField<T> encoder) {
+    super(type, value, encoder, 0);// 对于可变长字段，长度预设为0
   }
 
   @Override
-  protected byte[] format() throws UnsupportedEncodingException {
-    return value.toString().getBytes(encoding);
+  protected byte[] format(String charset) throws UnsupportedEncodingException {
+    return value.toString().getBytes(charset);
   }
 
   @Override
-  public void write(OutputStream out) throws UnsupportedEncodingException, IOException {
+  public void write(OutputStream out, String charset)
+      throws UnsupportedEncodingException, IOException {
 
-
-    byte[] data = encoder == null ? format() : encoder.encodeField(value).getBytes();
+    byte[] data =
+        encoder == null ? format(charset) : encoder.encodeField(value, charset).getBytes();
     // 输出可变长字段的总长度
-    writeLengthHeader(out, data.length, encoding);
+    writeLengthHeader(out, data.length, charset);
     // 输出可变长字段的内容
     out.write(data);
   }
@@ -72,10 +70,13 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
    * 对于变长的字段 ，值的长度为值的实际长度加上字段头的长度
    */
   @Override
-  public int getValueLength() {
+  public int getValueLength(String charset) {
     /*
      * length 在字段创建时会由构造方法根据值的实际长度设置
-     */
+     */// 根据内容的实际长度去重设长度字段
+    length =
+        encoder == null ? value.toString().length() : encoder.encodeField(value, charset).length();
+
     return length + getHeaderLength();
   }
 

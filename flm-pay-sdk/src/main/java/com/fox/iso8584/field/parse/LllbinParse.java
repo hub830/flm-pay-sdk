@@ -20,7 +20,7 @@ public class LllbinParse extends FieldParse {
 
   @Override
   public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
-      String encoding) throws ParseException, UnsupportedEncodingException {
+      String charset) throws ParseException, UnsupportedEncodingException {
 
     final int l = decodeLength(buf, pos, 3);
 
@@ -28,12 +28,12 @@ public class LllbinParse extends FieldParse {
     System.arraycopy(buf, pos + 3, _v, 0, l);
 
     if (custom == null) {
-      LllBinVarValue<?> lllBinVarValue = new LllBinVarValue<>(_v, null, encoding);
+      LllBinVarValue<?> lllBinVarValue = new LllBinVarValue<>(_v, null);
       return lllBinVarValue;
     } else {
       try {
-        T dec = custom.decodeField(new String(buf, pos + 3, l), encoding);
-        LllBinVarValue<?> lllBinVarValue = new LllBinVarValue<>(dec, custom, encoding);
+        T dec = custom.decodeField(new String(buf, pos + 3, l), charset);
+        LllBinVarValue<?> lllBinVarValue = new LllBinVarValue<>(dec, custom);
         return lllBinVarValue;
       } catch (IndexOutOfBoundsException ex) {
         throw new ParseException(

@@ -14,12 +14,12 @@ import com.fox.iso8584.field.FieldType;
 public class AlphaValue<T> extends AbstractFieldValue<T> {
 
 
-  public AlphaValue(T value, CustomField<T> encoder, int length, String encoding) {
-    super(FieldType.ALPHA, value, encoder, length, encoding);
+  public AlphaValue(T value, CustomField<T> encoder, int length) {
+    super(FieldType.ALPHA, value, encoder, length);
   }
 
   @Override
-  protected byte[] format() throws UnsupportedEncodingException {
+  protected byte[] format(String charset) throws UnsupportedEncodingException {
     String v;
     if (value == null) {
       v = "";
@@ -31,9 +31,9 @@ public class AlphaValue<T> extends AbstractFieldValue<T> {
     } else if (v.length() != length) {
       // 如果值包含中文的话，格式化出来的值 长度可能 不正确，需要做特殊处理
       v = String.format(String.format("%%-%ds", length), v);
-      v = chineseSubString(v, length, encoding);
+      v = chineseSubString(v, length, charset);
     }
-    return v.getBytes(encoding);
+    return v.getBytes(charset);
   }
 
   /**

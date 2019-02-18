@@ -13,8 +13,8 @@ import com.solab.iso8583.util.HexCodec;
  */
 public abstract class BinVarValue<T> extends VarValue<T> {
 
-  public BinVarValue(FieldType type, T value, CustomField<T> encoder, String encoding) {
-    super(type, value, encoder, encoding);
+  public BinVarValue(FieldType type, T value, CustomField<T> encoder) {
+    super(type, value, encoder);
 
     if (value instanceof byte[]) {
       length = ((byte[]) value).length;
@@ -23,9 +23,8 @@ public abstract class BinVarValue<T> extends VarValue<T> {
     }
   }
 
-
   @Override
-  protected byte[] format() throws UnsupportedEncodingException {
+  protected byte[] format(String charset) throws UnsupportedEncodingException {
     byte[] v;
     v = formatBinary();
     return v;
@@ -49,6 +48,16 @@ public abstract class BinVarValue<T> extends VarValue<T> {
     } else {
       return value.toString();
     }
+  }
+
+  @Override
+  public int getValueLength(String charset) {
+    if (value instanceof byte[]) {
+      length = ((byte[]) value).length;
+    } else {
+      length = value.toString().length() / 2 + (value.toString().length() % 2);
+    }
+    return length + getHeaderLength();
   }
 
 }
