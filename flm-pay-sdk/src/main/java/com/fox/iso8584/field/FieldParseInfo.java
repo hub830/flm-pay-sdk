@@ -5,14 +5,12 @@ import java.util.List;
 public class FieldParseInfo {
   private FieldType type;
   private int length;
-  private boolean binaryField;
   private List<FieldParseInfo> subFieldParse;
 
-  public FieldParseInfo(FieldType type, int length, boolean binaryField) {
+  public FieldParseInfo(FieldType type, int length) {
     super();
     this.type = type;
     this.length = length;
-    this.binaryField = binaryField;
   }
 
   public FieldType getType() {
@@ -39,12 +37,5 @@ public class FieldParseInfo {
     this.subFieldParse = subFieldParse;
   }
 
-  public boolean isBinaryField() {
-    return binaryField;
-  }
-
-  public void setBinaryField(boolean binaryField) {
-    this.binaryField = binaryField;
-  }
 
 }

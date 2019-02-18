@@ -8,7 +8,6 @@ import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
 import com.fox.iso8584.field.value.AlphaValue;
-import com.fox.iso8584.field.value.NumericValue;
 
 public class AlphaParse extends FieldParse {
 
@@ -23,24 +22,15 @@ public class AlphaParse extends FieldParse {
   @Override
   public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
       String encoding) throws ParseException, UnsupportedEncodingException {
-
-
     int length = fpi.getLength();
-
     try {
       String _v = new String(buf, pos, length, encoding);
-      /*
-       * if (_v.length() != length) { _v = new String(buf, pos, buf.length - pos,
-       * encoding).substring(0, length); }
-       */
       if (custom == null) {
         AlphaValue alphaValue = new AlphaValue<>(_v.trim(), null, length, encoding);
         return alphaValue;
       } else {
         T decoded = custom.decodeField(_v, encoding);
-
         AlphaValue alphaValue = new AlphaValue<>(decoded, custom, length, encoding);
-
         return alphaValue;
       }
     } catch (StringIndexOutOfBoundsException ex) {

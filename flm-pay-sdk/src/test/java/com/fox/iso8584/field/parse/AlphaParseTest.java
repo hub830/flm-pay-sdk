@@ -38,7 +38,7 @@ class AlphaParseTest {
     buf = Hex.decodeHex(value);
 
     encoding = "GBK";
-    fieldParseInfo = new FieldParseInfo(FieldType.ALPHA, 40, false);
+    fieldParseInfo = new FieldParseInfo(FieldType.ALPHA, 40);
     pos = 194;
   }
 

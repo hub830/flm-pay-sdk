@@ -75,11 +75,11 @@
 		<!-- 交易货币代码 -->
 		<field num="49" type="ALPHA" length="3" />
 		<!-- 个人标识码 -->
-		<field num="52" type="BINARY" length="8" binaryField="true" />
+		<field num="52" type="BINARY" length="8" />
 		<!-- 安全控制信息 -->
 		<field num="53" type="NUMERIC" length="16" />
 		<!-- IC卡数据域 -->
-		<field num="55" type="LLLBIN" binaryField="true" />
+		<field num="55" type="LLLBIN" />
 		<!-- 自定义域 -->
 		<field num="60" type="LLLVAR" />
 		<!-- 用户信息域 -->
@@ -100,7 +100,7 @@
 		<!-- 受理方保留 -->
 		<field num="122" type="LLLVAR" />
 		<!-- 报文鉴别码 -->
-		<field num="128" type="BINARY" length="8" binaryField="true" />
+		<field num="128" type="BINARY" length="8" />
 	</parse>
 
 </j8583-config>

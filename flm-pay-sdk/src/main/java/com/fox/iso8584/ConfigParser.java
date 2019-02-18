@@ -311,11 +311,7 @@ public class ConfigParser {
       length = Integer.parseInt(f.getAttribute("length"));
     }
     
-    boolean binaryField = false;
-    if (f.getAttribute("binaryField") != null) {
-      binaryField = Boolean.parseBoolean(f.getAttribute("binaryField"));
-    }
-    FieldParseInfo fp = new FieldParseInfo(type, length, binaryField);
+    FieldParseInfo fp = new FieldParseInfo(type, length);
     
     NodeList subs = f.getElementsByTagName("field");
     if (subs != null && subs.getLength() > 0) {

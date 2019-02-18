@@ -50,8 +50,7 @@ public class LllbinParse extends FieldParse {
       return lllBinVarValue;
     } else {
       try {
-        T dec = custom.decodeField(l == 0 ? "" : new String(buf, pos + 3, l), encoding);
-
+        T dec = custom.decodeField(new String(buf, pos + 3, l), encoding);
         LllBinVarValue lllBinVarValue = new LllBinVarValue<>(dec, custom, encoding);
         return lllBinVarValue;
       } catch (IndexOutOfBoundsException ex) {

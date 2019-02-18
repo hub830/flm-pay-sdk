@@ -35,7 +35,7 @@ class LllvarParseTest {
     field60 = "00000500030000000000";
     buf = Hex.decodeHex(value);
     encoding = "GBK";
-    fieldParseInfo = new FieldParseInfo(FieldType.LLLVAR, 0, true);
+    fieldParseInfo = new FieldParseInfo(FieldType.LLLVAR, 0);
     pos = 275;
   }
 
