@@ -15,12 +15,7 @@ import com.solab.iso8583.util.HexCodec;
  *
  */
 public abstract class VarValue<T> extends AbstractFieldValue<T> {
-
-  /**
-   * 指定是否对文本模式下的可变长度字段的长度标头进行解码 使用正确的字符串转换和字符编码。</br>
-   * 默认值为false，这意味着使用 ASCII码解码的旧行为。
-   */
-  protected boolean forceStringEncoding = false;
+ 
 
   public VarValue() {}
 
@@ -65,17 +60,6 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
       }
       // BCD encode the rest of the length
       outs.write((((valueLength % 100) / 10) << 4) | (valueLength % 10));
-    } else if (forceStringEncoding) {
-      String lhead = Integer.toString(valueLength);
-      final int ldiff = headerLength - lhead.length();
-      if (ldiff == 1) {
-        lhead = '0' + lhead;
-      } else if (ldiff == 2) {
-        lhead = "00" + lhead;
-      } else if (ldiff == 3) {
-        lhead = "000" + lhead;
-      }
-      outs.write(encoding == null ? lhead.getBytes() : lhead.getBytes(encoding));
     } else {
       // write the length in ASCII
       if (headerLength == 4) {
