@@ -79,7 +79,7 @@
 		<!-- 安全控制信息 -->
 		<field num="53" type="NUMERIC" length="16" />
 		<!-- IC卡数据域 -->
-		<field num="55" type="LLLBIN2" binaryField="true" />
+		<field num="55" type="LLLBIN" binaryField="true" />
 		<!-- 自定义域 -->
 		<field num="60" type="LLLVAR" />
 		<!-- 用户信息域 -->

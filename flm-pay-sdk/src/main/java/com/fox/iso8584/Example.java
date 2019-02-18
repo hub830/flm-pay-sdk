@@ -139,7 +139,7 @@ public class Example {
         .setField(52, ff.getField(FieldType.BINARY, order.getPin(), null, 8, true))// 个人标识码
         .setField(53, ff.getField(FieldType.NUMERIC, 2600000000000000l, 16))// 安全控制信息
         .setField(55,
-            ff.getField(FieldType.LLLBIN2, order.getIcData(), null, 0, true))// IC卡数据域
+            ff.getField(FieldType.LLLBIN, order.getIcData(), null, 0, true))// IC卡数据域
         .setField(60, ff.getField(FieldType.LLLVAR, "00000500030000000000"))// 自定义域 .磁条卡60域名编码 或
                                                                             // IC卡60域编码
         .setField(61,

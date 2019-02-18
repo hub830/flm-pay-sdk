@@ -22,16 +22,16 @@ import com.fox.iso8584.IsoValue;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
-import com.fox.iso8584.field.value.LllBin2VarValue;
+import com.fox.iso8584.field.value.LllBinVarValue;
 import com.fox.iso8584.util.HexCodec;
 
-public class Lllbin2Parse extends FieldParse {
+public class LllbinParse extends FieldParse {
 
-  private final static Lllbin2Parse INSTANCE = new Lllbin2Parse();
+  private final static LllbinParse INSTANCE = new LllbinParse();
 
-  private Lllbin2Parse() {}
+  private LllbinParse() {}
 
-  public static Lllbin2Parse getInstance() {
+  public static LllbinParse getInstance() {
     return INSTANCE;
   }
 
@@ -46,16 +46,16 @@ public class Lllbin2Parse extends FieldParse {
     System.arraycopy(buf, pos+3, _v, 0, l);
     
     if (custom == null) {
-      LllBin2VarValue lllBin2VarValue = new LllBin2VarValue<>(_v, null, encoding, true);// TODO
+      LllBinVarValue lllBinVarValue = new LllBinVarValue<>(_v, null, encoding, true);// TODO
                                                                                              // 是否二进制
-      return lllBin2VarValue;
+      return lllBinVarValue;
     } else {
       try {
         T dec = custom.decodeField(l == 0 ? "" : new String(buf, pos + 3, l), encoding);
 
-        LllBin2VarValue lllBin2VarValue = new LllBin2VarValue<>(dec, custom, encoding, false);// TODO
+        LllBinVarValue lllBinVarValue = new LllBinVarValue<>(dec, custom, encoding, false);// TODO
                                                                                               // 是否二进制
-        return lllBin2VarValue;
+        return lllBinVarValue;
       } catch (IndexOutOfBoundsException ex) {
         throw new ParseException(
             String.format("Insufficient data for LLLBIN , pos %d len %d", pos, l), pos);

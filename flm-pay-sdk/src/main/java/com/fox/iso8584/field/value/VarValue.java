@@ -48,7 +48,7 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
    * 
    * @param outs
    * @throws IOException
-   */
+   *//*
   protected void writeLengthHeader(final OutputStream outs, int valueLength, String encoding)
       throws IOException {
     final int headerLength = getHeaderLength();
@@ -75,8 +75,26 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
       }
       outs.write((valueLength % 10) + 48);
     }
-  }
+  }*/
 
+  protected void writeLengthHeader(final OutputStream outs, int valueLength, String encoding)
+      throws IOException {
+    final int headerLength = getHeaderLength();
+
+    // write the length in ASCII
+    if (headerLength == 4) {
+      outs.write((valueLength / 1000) + 48);
+      outs.write(((valueLength % 1000) / 100) + 48);
+    } else if (headerLength == 3) {
+      outs.write((valueLength / 100) + 48);
+    }
+    if (valueLength >= 10) {
+      outs.write(((valueLength % 100) / 10) + 48);
+    } else {
+      outs.write(48);
+    }
+    outs.write((valueLength % 10) + 48);
+  }
   protected abstract int getHeaderLength();
 
   /**

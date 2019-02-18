@@ -24,7 +24,7 @@ public class LllBin2VarValue<T> extends BinVarValue<T> {
     return 3;
   }
 
-
+/*
   @Override
   protected void writeLengthHeader(OutputStream outs, int valueLength, String encoding)
       throws IOException {
@@ -39,6 +39,6 @@ public class LllBin2VarValue<T> extends BinVarValue<T> {
       outs.write(48);
     }
     outs.write((valueLength % 10) + 48);
-  }
+  }*/
 
 }

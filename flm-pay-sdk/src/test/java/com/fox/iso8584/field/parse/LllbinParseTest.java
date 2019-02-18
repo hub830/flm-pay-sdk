@@ -16,8 +16,8 @@ import com.fox.iso8584.field.value.LllBin2VarValue;
 
 @RunWith(JUnitPlatform.class)
 @DisplayName("二进制字段解析测试用例")
-class Lllbin2ParseTest {
-  Lllbin2Parse lllbin2Parse = Lllbin2Parse.getInstance();
+class LllbinParseTest {
+  LllbinParse lllbin2Parse = LllbinParse.getInstance();
   FieldParseInfo fieldParseInfo;
   String encoding;
   String value;

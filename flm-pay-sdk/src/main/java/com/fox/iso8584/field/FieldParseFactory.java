@@ -27,7 +27,7 @@ import com.fox.iso8584.field.parse.BinaryParse;
 import com.fox.iso8584.field.parse.Date10Parse;
 import com.fox.iso8584.field.parse.Date4Parse;
 import com.fox.iso8584.field.parse.DateExpParse;
-import com.fox.iso8584.field.parse.Lllbin2Parse;
+import com.fox.iso8584.field.parse.LllbinParse;
 import com.fox.iso8584.field.parse.LllvarParse;
 import com.fox.iso8584.field.parse.LlvarParse;
 import com.fox.iso8584.field.parse.NumericParse;
@@ -95,9 +95,9 @@ public class FieldParseFactory {
       case LLLBCDBIN:
         break;
       case LLLBIN:
+        fieldParse = LllbinParse.getInstance();
         break;
       case LLLBIN2:
-        fieldParse = Lllbin2Parse.getInstance();
         break;
       case LLLLBCDBIN:
         break;
