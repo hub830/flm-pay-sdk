@@ -32,14 +32,8 @@ import com.fox.iso8584.field.value.TimeValue;
 
 
 public class FieldFactory {
+ 
 
-  private final String encoding;
-
-
-  public FieldFactory(String encoding) {
-    super();
-    this.encoding = encoding; 
-  }
 
   /**
    * 根据 field类型，返回对应的值 对象
@@ -48,8 +42,8 @@ public class FieldFactory {
    * @param value 值
    * @return
    */
-  public <T> FieldValue<T> getField(FieldType type, T value) {
-    return getField(type, value, null, 0, false);
+  public static <T> FieldValue<T> getField(FieldType type, T value,String encoding) {
+    return getField(type, value, null, 0, false,encoding);
   }
 
   /**
@@ -60,8 +54,8 @@ public class FieldFactory {
    * @param length 字段长度，变长字段 及 日期类型字段传0
    * @return
    */
-  public <T> FieldValue<T> getField(FieldType type, T value, int length) {
-    return getField(type, value, null, length, false);
+  public static <T> FieldValue<T> getField(FieldType type, T value, int length,String encoding) {
+    return getField(type, value, null, length, false,encoding);
   }
 
   /**
@@ -75,8 +69,8 @@ public class FieldFactory {
    * @param forceStringEncoding 是否对文本模式下的可变长度字段的长度标头进行解码
    * @return
    */
-  public <T> FieldValue<T> getField(FieldType type, T value, CustomField<T> encoder, int length,
-      boolean binaryField) {
+  public static <T> FieldValue<T> getField(FieldType type, T value, CustomField<T> encoder, int length,
+      boolean binaryField,String encoding) {
     switch (type) {
       case ALPHA:
         return new AlphaValue<T>(value, encoder, length, encoding);

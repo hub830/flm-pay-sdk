@@ -18,13 +18,17 @@ package com.fox.iso8584;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import com.fox.iso8584.field.FieldValue;
+import com.fox.iso8584.field.value.AlphaValue;
+import com.fox.iso8584.field.value.BinaryValue;
+import com.fox.iso8584.field.value.NumericValue;
 
 
 public class IsoHeader {
 
   /** This is where the values are stored. */
   @SuppressWarnings("rawtypes")
-  protected IsoValue[] fields = new IsoValue[10];
+  protected FieldValue[] fields = new FieldValue[10];
   protected boolean forceStringEncoding;
   protected String encoding = System.getProperty("file.encoding");
 
@@ -33,23 +37,16 @@ public class IsoHeader {
   public IsoHeader(String sourceStationId, String destinationId, String encoding) {
     this.encoding = encoding;
     byte[] headerLength = {46};
-    fields[0] = new IsoValue<byte[]>(IsoType.BINARY,headerLength, 1) ;// 域1 该域存放报文头的字节数 该域的值必须为46
-    fields[0].setBinaryField(true);
-    fields[1] = new IsoValue<Integer>(IsoType.BINARY, 1, 1);// 域2 头标识和版本号 0表示该报文是一个生产报文
-    fields[1].setBinaryField(true);
+    fields[0] = new BinaryValue<byte[]>(headerLength, null, 1, encoding);// 域1 该域存放报文头的字节数 该域的值必须为46
+    fields[1] = new BinaryValue<Integer>(1, null, 1, encoding);// 域2 头标识和版本号 0表示该报文是一个生产报文
     // fields[2] = new IsoValue<Integer>(IsoType.NUMERIC, 2, 4);// 域3 报文总长度 需要在输出数据时才能计算出来
-    fields[3] = new IsoValue<String>(IsoType.ALPHA, destinationId, 11);// 域4 目的ID
-    fields[4] = new IsoValue<String>(IsoType.ALPHA, sourceStationId, 11);// 域5 源ID
-    fields[5] = new IsoValue<Integer>(IsoType.NUMERIC, 0, 3);// 域6 保留使用
-    fields[6] = new IsoValue<Integer>(IsoType.NUMERIC, 0, 1);// 域7 批次号
-    fields[7] = new IsoValue<Integer>(IsoType.NUMERIC, 0, 8);// 域8 交易信息
-    fields[8] = new IsoValue<Integer>(IsoType.ALPHA, 0, 1);// 域9 用户信息
-    fields[9] = new IsoValue<Integer>(IsoType.NUMERIC, 0, 5);// 域10 拒绝码
-    for (IsoValue<?> v : fields) {
-      if (v != null) {
-        v.setCharacterEncoding(encoding);
-      }
-    }
+    fields[3] = new AlphaValue<String>(destinationId, null, 11, encoding);// 域4 目的ID
+    fields[4] = new AlphaValue<String>(sourceStationId, null, 11, encoding);// 域5 源ID
+    fields[5] = new NumericValue<Integer>(0, null, 3, encoding);// 域6 保留使用
+    fields[6] = new NumericValue<Integer>(0, null, 1, encoding);// 域7 批次号
+    fields[7] = new NumericValue<Integer>(0, null, 8, encoding);// 域8 交易信息
+    fields[8] = new AlphaValue<Integer>(0, null, 1, encoding);// 域9 用户信息
+    fields[9] = new NumericValue<Integer>(0, null, 5, encoding);// 域10 拒绝码
   }
 
   /**
@@ -58,7 +55,7 @@ public class IsoHeader {
    * @param length
    */
   public void setTotalLengtn(int length) {
-    fields[2] = new IsoValue<Integer>(IsoType.NUMERIC, length, 4);// 域3 报文总长度 需要在输出数据时才能计算出来
+    fields[2] = new NumericValue<Integer>(length, null, 4, encoding);// 域3 报文总长度 需要在输出数据时才能计算出来
   }
 
   public byte[] writeData() {
@@ -66,10 +63,10 @@ public class IsoHeader {
 
     // Fields
     for (int i = 0; i < 10; i++) {
-      IsoValue<?> v = fields[i];
+      FieldValue<?> v = fields[i];
       if (v != null) {
         try {
-          v.write(bout, v.isBinaryField(), forceStringEncoding);
+          v.write(bout);
         } catch (IOException ex) {
           // should never happen, writing to a ByteArrayOutputStream
         }

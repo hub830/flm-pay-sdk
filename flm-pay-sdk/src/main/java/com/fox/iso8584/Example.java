@@ -73,8 +73,7 @@ public class Example {
   }
 
   private static void initBody(IsoBody body) throws DecoderException {
-
-    FieldFactory ff = new FieldFactory("GBK");
+String encoding = "GBK";
 
 
 
@@ -103,48 +102,48 @@ public class Example {
         .settleFee(new BigDecimal(0.2))//
         .build();
 
-    ff.getField(FieldType.LLVAR, order.getAcctNum());
+    FieldFactory.getField(FieldType.LLVAR, order.getAcctNum(),encoding);
 
 
 
     // 请求类型
     // m.setValue(0, 0200, IsoType.NUMERIC, 4);
-    body.setField(2, ff.getField(FieldType.LLVAR, order.getAcctNum()))// 主账号
-        .setField(3, ff.getField(FieldType.NUMERIC, 0, 6))// 交易处理码
-        .setField(4, ff.getField(FieldType.AMOUNT, order.getAmount()))// PadType.LEFT_ZERO
+    body.setField(2, FieldFactory.getField(FieldType.LLVAR, order.getAcctNum(),encoding))// 主账号
+        .setField(3, FieldFactory.getField(FieldType.NUMERIC, 0, 6,encoding))// 交易处理码
+        .setField(4, FieldFactory.getField(FieldType.AMOUNT, order.getAmount(),encoding))// PadType.LEFT_ZERO
                                                                       // 交易金额(分)
-        .setField(7, ff.getField(FieldType.DATE10, order.getTransTime()))// 交易传输时间
-        .setField(11, ff.getField(FieldType.NUMERIC, 87591, 6))// 系统跟踪号
-        .setField(12, ff.getField(FieldType.TIME, order.getTransTime()))// 受卡方所在地时间
-        .setField(13, ff.getField(FieldType.DATE4, order.getTransTime()))// 受卡方所在地日期
-        .setField(14, ff.getField(FieldType.DATE_EXP, dateExpr.toDate()))// 卡有效期
+        .setField(7, FieldFactory.getField(FieldType.DATE10, order.getTransTime(),encoding))// 交易传输时间
+        .setField(11, FieldFactory.getField(FieldType.NUMERIC, 87591, 6,encoding))// 系统跟踪号
+        .setField(12, FieldFactory.getField(FieldType.TIME, order.getTransTime(),encoding))// 受卡方所在地时间
+        .setField(13, FieldFactory.getField(FieldType.DATE4, order.getTransTime(),encoding))// 受卡方所在地日期
+        .setField(14, FieldFactory.getField(FieldType.DATE_EXP, dateExpr.toDate(),encoding))// 卡有效期
         // .setField(15, ff.GetField(FieldType.DATE4, null))// 卡有效期
-        .setField(18, ff.getField(FieldType.NUMERIC, order.getMcc(), 4))// 商户分类编码(MCC)
-        .setField(22, ff.getField(FieldType.NUMERIC, order.getPosEntryModeCode(), 3))// 服务点输入方式码
-        .setField(23, ff.getField(FieldType.NUMERIC, order.getCardSeqId(), 3))// 卡序列号
-        .setField(25, ff.getField(FieldType.NUMERIC, 0, 2))// 服务点条件码
-        .setField(26, ff.getField(FieldType.NUMERIC, 6, 2))// 服务点PIN获取码
-        .setField(32, ff.getField(FieldType.LLVAR, "48501270"))// 受理方标识码
-        .setField(33, ff.getField(FieldType.LLVAR, "48501111"))// 发送方标识码
-        .setField(35, ff.getField(FieldType.LLVAR, order.getTrack2()))// 第二磁道数据
-        .setField(37, ff.getField(FieldType.ALPHA, order.getReferenceNum(), 12))// 检索参考号
+        .setField(18, FieldFactory.getField(FieldType.NUMERIC, order.getMcc(), 4,encoding))// 商户分类编码(MCC)
+        .setField(22, FieldFactory.getField(FieldType.NUMERIC, order.getPosEntryModeCode(), 3,encoding))// 服务点输入方式码
+        .setField(23, FieldFactory.getField(FieldType.NUMERIC, order.getCardSeqId(), 3,encoding))// 卡序列号
+        .setField(25, FieldFactory.getField(FieldType.NUMERIC, 0, 2,encoding))// 服务点条件码
+        .setField(26, FieldFactory.getField(FieldType.NUMERIC, 6, 2,encoding))// 服务点PIN获取码
+        .setField(32, FieldFactory.getField(FieldType.LLVAR, "48501270",encoding))// 受理方标识码
+        .setField(33, FieldFactory.getField(FieldType.LLVAR, "48501111",encoding))// 发送方标识码
+        .setField(35, FieldFactory.getField(FieldType.LLVAR, order.getTrack2(),encoding))// 第二磁道数据
+        .setField(37, FieldFactory.getField(FieldType.ALPHA, order.getReferenceNum(), 12,encoding))// 检索参考号
         // .setField(38, ff.GetField(FieldType.ALPHA, ""))// 授权标识应答码
         // .setField(39, ff.GetField(FieldType.ALPHA, null, null, 2, false, false))// 应答码
-        .setField(41, ff.getField(FieldType.ALPHA, order.getTerminalNum(), 8))// 终端号
-        .setField(42, ff.getField(FieldType.ALPHA, order.getCustomerNo(), 15))// 商户号
-        .setField(43, ff.getField(FieldType.ALPHA, order.getCustomerName(), 40))// PadType.RIGHT_SPACE
+        .setField(41, FieldFactory.getField(FieldType.ALPHA, order.getTerminalNum(), 8,encoding))// 终端号
+        .setField(42, FieldFactory.getField(FieldType.ALPHA, order.getCustomerNo(), 15,encoding))// 商户号
+        .setField(43, FieldFactory.getField(FieldType.ALPHA, order.getCustomerName(), 40,encoding))// PadType.RIGHT_SPACE
                                                                                 // 商户名称
         // .setField(48, ff.GetField(FieldType.LLLVAR, null))// 附加数据－私有
-        .setField(49, ff.getField(FieldType.ALPHA, "156", 3))// 交易货币代码
-        .setField(52, ff.getField(FieldType.BINARY, order.getPin(), null, 8, true))// 个人标识码
-        .setField(53, ff.getField(FieldType.NUMERIC, 2600000000000000l, 16))// 安全控制信息
+        .setField(49, FieldFactory.getField(FieldType.ALPHA, "156", 3,encoding))// 交易货币代码
+        .setField(52, FieldFactory.getField(FieldType.BINARY, order.getPin(), null, 8, true,encoding))// 个人标识码
+        .setField(53, FieldFactory.getField(FieldType.NUMERIC, 2600000000000000l, 16,encoding))// 安全控制信息
         .setField(55,
-            ff.getField(FieldType.LLLBIN, order.getIcData(), null, 0, true))// IC卡数据域
-        .setField(60, ff.getField(FieldType.LLLVAR, "00000500030000000000"))// 自定义域 .磁条卡60域名编码 或
+            FieldFactory.getField(FieldType.LLLBIN, order.getIcData(), null, 0, true,encoding))// IC卡数据域
+        .setField(60, FieldFactory.getField(FieldType.LLLVAR, "00000500030000000000",encoding))// 自定义域 .磁条卡60域名编码 或
                                                                             // IC卡60域编码
         .setField(61,
-            getField61(ff, order.getPhone(), settleType, order.getFee(), order.getSettleFee()))
-        .setField(128, ff.getField(FieldType.BINARY, "4239413241363734", null, 8, true))// 自定义域
+            getField61(  order.getPhone(), settleType, order.getFee(), order.getSettleFee(),encoding))
+        .setField(128, FieldFactory.getField(FieldType.BINARY, "4239413241363734", null, 8, true,encoding))// 自定义域
     // .磁条卡60域名编码
     // 或
     // IC卡60域编码
@@ -152,13 +151,13 @@ public class Example {
 
   }
 
-  private static FieldValue<CompositeField> getField61(FieldFactory ff, String phone,
-      SettleType settleType, BigDecimal fee, BigDecimal settleFee) {
+  private static FieldValue<CompositeField> getField61(  String phone,
+      SettleType settleType, BigDecimal fee, BigDecimal settleFee,String encoding) {
 
 
-    FieldValue<String> field61_1 = ff.getField(FieldType.ALPHA, "02", 2);
-    FieldValue<String> field61_2 = ff.getField(FieldType.ALPHA, phone, 15);
-    FieldValue<String> field61_3 = ff.getField(FieldType.ALPHA, " ", 11);
+    FieldValue<String> field61_1 = FieldFactory.getField(FieldType.ALPHA, "02", 2,encoding);
+    FieldValue<String> field61_2 = FieldFactory.getField(FieldType.ALPHA, phone, 15,encoding);
+    FieldValue<String> field61_3 = FieldFactory.getField(FieldType.ALPHA, " ", 11,encoding);
     // 用户信息域
     CompositeField field61 = new CompositeField()//
         .addValue(field61_1)//
@@ -167,13 +166,13 @@ public class Example {
 
     if (settleType == SettleType.D0) {
       BigDecimal totalFee = fee.add(settleFee);
-      FieldValue<BigDecimal> field61_4 = ff.getField(FieldType.AMOUNT, totalFee, 12);
+      FieldValue<BigDecimal> field61_4 = FieldFactory.getField(FieldType.AMOUNT, totalFee, 12,encoding);
       field61.addValue(field61_4);
     } else {
 
-      FieldValue<String> field61_4 = ff.getField(FieldType.ALPHA, "", 12);
+      FieldValue<String> field61_4 = FieldFactory.getField(FieldType.ALPHA, "", 12,encoding);
       field61.addValue(field61_4);
     }
-    return ff.getField(FieldType.LLLVAR, field61, field61, 0, false);
+    return FieldFactory.getField(FieldType.LLLVAR, field61, field61, 0, false,encoding);
   }
 }

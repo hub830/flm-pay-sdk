@@ -4,13 +4,10 @@ package com.fox.iso8584.field.parse;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import com.fox.iso8584.CustomField;
-import com.fox.iso8584.IsoValue;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
 import com.fox.iso8584.field.value.BinaryValue;
-import com.fox.iso8584.field.value.LlvarValue;
-import com.fox.iso8584.util.HexCodec;
 
 public class BinaryParse extends FieldParse {
 

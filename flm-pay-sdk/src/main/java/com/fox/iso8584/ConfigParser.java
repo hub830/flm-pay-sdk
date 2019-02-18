@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,14 +35,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import com.fox.iso8584.CustomField;
-import com.fox.iso8584.IsoBody;
-import com.fox.iso8584.IsoType;
-import com.fox.iso8584.IsoValue;
-import com.fox.iso8584.MessageFactory;
-import com.fox.iso8584.codecs.CompositeField;
+import com.fox.iso8584.field.FieldFactory;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldType;
+import com.fox.iso8584.field.FieldValue;
+import com.solab.iso8583.IsoValue;
 
 /**
  * This class is used to parse a XML configuration file and configure a MessageFactory with the
@@ -196,10 +193,7 @@ public class ConfigParser {
         Element f = (Element) fields.item(j);
         if (f.getParentNode() == elem) {
           final int num = Integer.parseInt(f.getAttribute("num"));
-          IsoValue<?> v = getTemplateField(f, mfact, true);
-          if (v != null) {
-            v.setCharacterEncoding(mfact.getCharacterEncoding());
-          }
+          FieldValue<?> v = getTemplateField(f, mfact, true); 
 //          m.setField(num, v);
         }
       }
@@ -232,10 +226,7 @@ public class ConfigParser {
           Element f = (Element) fields.item(j);
           int num = Integer.parseInt(f.getAttribute("num"));
           if (f.getParentNode() == elem) {
-            IsoValue<?> v = getTemplateField(f, mfact, true);
-            if (v != null) {
-              v.setCharacterEncoding(mfact.getCharacterEncoding());
-            }
+            FieldValue<?> v = getTemplateField(f, mfact, true); 
 //            m.setField(num, v);
           }
         }
@@ -249,7 +240,7 @@ public class ConfigParser {
    * and the message factory has a codec for this field, that codec is assigned to that field. For
    * nested fields, a CompositeField is created and populated.
    */
-  protected static <M extends IsoBody> IsoValue<?> getTemplateField(Element f, MessageFactory mfact,
+  protected static <M extends IsoBody> FieldValue<?> getTemplateField(Element f, MessageFactory mfact,
       boolean toplevel) {
     final int num = Integer.parseInt(f.getAttribute("num"));
     final String typedef = f.getAttribute("type");
@@ -260,29 +251,7 @@ public class ConfigParser {
     if (f.getAttribute("length").length() > 0) {
       length = Integer.parseInt(f.getAttribute("length"));
     }
-    final IsoType itype = IsoType.valueOf(typedef);
-    final NodeList subs = f.getElementsByTagName("field");
-    if (subs != null && subs.getLength() > 0) {
-      // Composite field
-      final CompositeField cf = new CompositeField();
-      for (int j = 0; j < subs.getLength(); j++) {
-        Element sub = (Element) subs.item(j);
-        if (sub.getParentNode() == f) {
-          IsoValue<?> sv = getTemplateField(sub, mfact, false);
-          if (sv != null) {
-            sv.setCharacterEncoding(mfact.getCharacterEncoding());
-//            cf.addValue(sv);
-          }
-        }
-      }
-      IsoValue<?> rv = itype.needsLength() ? new IsoValue<>(itype, cf, length, cf)
-          : new IsoValue<>(itype, cf, cf);
-      if (f.hasAttribute("tz")) {
-        TimeZone tz = TimeZone.getTimeZone(f.getAttribute("tz"));
-        rv.setTimeZone(tz);
-      }
-      return rv;
-    }
+    final FieldType itype = FieldType.valueOf(typedef);
     final String v;
     if (f.getChildNodes().getLength() == 0) {
       v = "";
@@ -290,17 +259,13 @@ public class ConfigParser {
       v = f.getChildNodes().item(0).getNodeValue();
     }
     final CustomField<Object> cf = toplevel ? mfact.getCustomField(num) : null;
-    IsoValue<?> rv;
+    FieldValue<?> rv;
     if (cf == null) {
-      rv = itype.needsLength() ? new IsoValue<>(itype, v, length) : new IsoValue<>(itype, v);
+      rv =  FieldFactory.getField(itype, v,length,"GBK");
     } else {
-      rv = itype.needsLength() ? new IsoValue<>(itype, cf.decodeField(v,"GBK"), length, cf)
-          : new IsoValue<>(itype, cf.decodeField(v,"GBK"), cf);
+      rv =  FieldFactory.getField(itype, cf.decodeField(v,"GBK"),length,"GBK");
     }
-    if (f.hasAttribute("tz")) {
-      TimeZone tz = TimeZone.getTimeZone(f.getAttribute("tz"));
-      rv.setTimeZone(tz);
-    }
+
     return rv;
   }
 

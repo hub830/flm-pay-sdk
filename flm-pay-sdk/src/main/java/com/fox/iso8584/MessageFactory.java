@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fox.iso8584.codecs.CompositeField;
 import com.fox.iso8584.field.FieldFactory;
 import com.fox.iso8584.field.FieldParseFactory;
 import com.fox.iso8584.field.FieldParseInfo;
@@ -55,8 +54,7 @@ public class MessageFactory {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
 
-
-  FieldFactory ff = new FieldFactory("GBK");
+ 
 
   /** This map stores the message template for each message type. */
   private Map<Integer, IsoBody> typeTemplates = new HashMap<>();
@@ -434,10 +432,10 @@ public class MessageFactory {
       }
     }
     if (traceGen != null) {
-      body.setField(11, ff.getField(FieldType.NUMERIC, traceGen.nextTrace(), 6));
+      body.setField(11, FieldFactory.getField(FieldType.NUMERIC, traceGen.nextTrace(), 6,encoding));
     }
     if (setDate) {
-      body.setField(7, ff.getField(FieldType.DATE10, new Date()));
+      body.setField(7, FieldFactory.getField(FieldType.DATE10, new Date(),encoding));
     }
 
     return body;
