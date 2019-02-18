@@ -95,17 +95,15 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
 
   protected abstract int getHeaderLength();
 
+  /**
+   * 对于变长的字段 ，值的长度为值的实际长度加上字段头的长度
+   */
   @Override
   public int getValueLength() {
+    /*
+     * length 在字段创建时会由构造方法根据值的实际长度设置
+     */
     return length+ getHeaderLength();
-/*    try {
-      int valueLength= value.toString().getBytes(encoding).length;
-      return valueLength + getHeaderLength();
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return 0;*/
   }
 
   @Override

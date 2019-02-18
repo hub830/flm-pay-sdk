@@ -57,22 +57,12 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
     return binary;
   }
 
+  /**
+   * 对于不可变长字段，值 的长度直接为其定义时设置的长度
+   */
   @Override
   public int getValueLength() { 
-    
-    
-
     return length;
-/*    try {
-      if (binary) {
-        return length;
-      }
-      return value.toString().getBytes(encoding).length;
-      
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-    return 0;*/
   }
 
   /**
