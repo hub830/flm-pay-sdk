@@ -25,12 +25,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fox.iso8584.parse.ConfigParser;
-import com.fox.iso8584.parse.DateTimeParseInfo;
-import com.fox.iso8584.parse.FieldParseInfo;
+import com.fox.iso8584.codecs.CompositeField;
+import com.fox.iso8584.field.FieldFactory;
+import com.fox.iso8584.field.FieldParseFactory;
+import com.fox.iso8584.field.FieldParseInfo;
+import com.fox.iso8584.field.FieldType;
+import com.fox.iso8584.field.FieldValue;
 
 
 /**
@@ -51,6 +53,10 @@ import com.fox.iso8584.parse.FieldParseInfo;
 public class MessageFactory {
 
   protected final Logger log = LoggerFactory.getLogger(getClass());
+
+
+
+  FieldFactory ff = new FieldFactory("GBK");
 
   /** This map stores the message template for each message type. */
   private Map<Integer, IsoBody> typeTemplates = new HashMap<>();
@@ -87,18 +93,7 @@ public class MessageFactory {
 
   private String encoding = System.getProperty("file.encoding");
 
-  /**
-   * This flag gets passed on to newly created messages and also sets this value for all field
-   * parsers in parsing guides.
-   */
-  public void setForceStringEncoding(boolean flag) {
-    forceStringEncoding = flag;
-    for (Map<Integer, FieldParseInfo> pm : parseMap.values()) {
-      for (FieldParseInfo parser : pm.values()) {
-        parser.setForceStringDecoding(flag);
-      }
-    }
-  }
+
 
   public boolean isForceStringEncoding() {
     return forceStringEncoding;
@@ -112,38 +107,16 @@ public class MessageFactory {
     this.destinationId = destinationId;
   }
 
-  /** Sets the character encoding used for parsing ALPHA, LLVAR and LLLVAR fields. */
-  public void setCharacterEncoding(String value) {
-    if (encoding == null) {
-      throw new IllegalArgumentException("Cannot set null encoding.");
-    }
-    encoding = value;
-    if (!parseMap.isEmpty()) {
-      for (Map<Integer, FieldParseInfo> pt : parseMap.values()) {
-        for (FieldParseInfo fpi : pt.values()) {
-          fpi.setCharacterEncoding(encoding);
-        }
-      }
-    }
-    if (!typeTemplates.isEmpty()) {
-      for (IsoBody tmpl : typeTemplates.values()) {
-        tmpl.setCharacterEncoding(encoding);
-        for (int i = 2; i < 129; i++) {
-          IsoValue<?> v = tmpl.getField(i);
-          if (v != null) {
-            v.setCharacterEncoding(encoding);
-          }
-        }
-      }
-    }
-  }
-
   /**
    * Returns the encoding used to parse ALPHA, LLVAR and LLLVAR fields. The default is the
    * file.encoding system property.
    */
   public String getCharacterEncoding() {
     return encoding;
+  }
+
+  public void setCharacterEncoding(String encoding) {
+    this.encoding = encoding;
   }
 
   /**
@@ -209,8 +182,7 @@ public class MessageFactory {
   public void setConfigPath(String path) throws IOException {
     ConfigParser.configureFromClasspathConfig(this, path);
     // Now re-set some properties that need to be propagated down to the recently assigned objects
-    setCharacterEncoding(encoding);
-    setForceStringEncoding(forceStringEncoding);
+    // setCharacterEncoding(encoding);
   }
 
   /**
@@ -247,23 +219,6 @@ public class MessageFactory {
     return message;
   }
 
-
-  /** Sets the timezone for the specified FieldParseInfo, if it's needed for parsing dates. */
-  public void setTimezoneForParseGuide(int messageType, int field, TimeZone tz) {
-    if (field == 0) {
-      DateTimeParseInfo.setDefaultTimeZone(tz);
-    }
-    Map<Integer, FieldParseInfo> guide = parseMap.get(messageType);
-    if (guide != null) {
-      FieldParseInfo fpi = guide.get(field);
-      if (fpi instanceof DateTimeParseInfo) {
-        ((DateTimeParseInfo) fpi).setTimeZone(tz);
-        return;
-      }
-    }
-    log.warn("Field {} for message type {} is not for dates, cannot set timezone", field,
-        messageType);
-  }
 
 
   /**
@@ -331,53 +286,15 @@ public class MessageFactory {
           log.warn("Field {} is not really in the message even though it's in the bitmap", i);
           bs.clear(i - 1);
         } else {
-          CustomField<?> decoder = fpi.getDecoder();
-          IsoValue<?> val;
-          if (decoder == null) {
-            decoder = getCustomField(i);
-          }
-          if (fpi.isBinaryField()) {
-            val = fpi.parseBinary(i, buf, pos, decoder);
-            body.setField(i, val);
-            // To get the correct next position, we need to get the number of bytes, not chars
-            if (val != null) {
-              if (val.getType() == IsoType.NUMERIC || val.getType() == IsoType.DATE10
-                  || val.getType() == IsoType.DATE4 || val.getType() == IsoType.DATE12
-                  || val.getType() == IsoType.DATE14 || val.getType() == IsoType.DATE_EXP
-                  || val.getType() == IsoType.AMOUNT || val.getType() == IsoType.TIME) {
-                pos += (val.getLength() / 2) + (val.getLength() % 2);
-              } else {
-                pos += val.getLength();
-              }
-              if (val.getType() == IsoType.LLVAR || val.getType() == IsoType.LLBIN
-                  || val.getType() == IsoType.LLBCDBIN) {
-                pos++;
-              } else if (val.getType() == IsoType.LLLVAR || val.getType() == IsoType.LLLBIN
-                  || val.getType() == IsoType.LLLBCDBIN || val.getType() == IsoType.LLLLVAR
-                  || val.getType() == IsoType.LLLLBIN || val.getType() == IsoType.LLLLBCDBIN) {
-                pos += 2;
-              } else if (val.getType() == IsoType.LLLBIN_2) {
-                pos += 3;
-              }
-            }
-          } else {
-            val = fpi.parse(i, buf, pos, decoder);
-            body.setField(i, val);
-            // To get the correct next position, we need to get the number of bytes, not chars
-            pos += val.toString().getBytes(fpi.getCharacterEncoding()).length;
-            if (val.getType() == IsoType.LLVAR || val.getType() == IsoType.LLBIN
-                || val.getType() == IsoType.LLBCDBIN) {
-              pos += 2;
-            } else if (val.getType() == IsoType.LLLVAR || val.getType() == IsoType.LLLBIN
-                || val.getType() == IsoType.LLLBCDBIN) {
-              pos += 3;
-            } else if (val.getType() == IsoType.LLLLVAR || val.getType() == IsoType.LLLLBIN
-                || val.getType() == IsoType.LLLLBCDBIN) {
-              pos += 4;
-            }
-          }
+          CustomField<?> decoder = getCustomField(i);
+
+          FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, encoding);
+          body.setField(i, field);
+
+          pos += field.getValueLength();
         }
       }
+
     }
 
     final IsoMessage message = new IsoMessage(type);
@@ -502,7 +419,6 @@ public class MessageFactory {
   protected IsoBody createIsoBody(IsoBody templ) {
 
     IsoBody body = new IsoBody();
-    body.setEtx(etx);
     body.setForceSecondaryBitmap(forceb2);
     body.setCharacterEncoding(encoding);
     body.setForceStringEncoding(forceStringEncoding);
@@ -518,19 +434,10 @@ public class MessageFactory {
       }
     }
     if (traceGen != null) {
-      body.setValue(11, traceGen.nextTrace(), IsoType.NUMERIC, 6);
+      body.setField(11, ff.getField(FieldType.NUMERIC, traceGen.nextTrace(), 6));
     }
     if (setDate) {
-      if (body.hasField(7)) {
-        // We may have a field with a timezone but no value
-        body.updateValue(7, new Date());
-      } else {
-        IsoValue<Date> now = new IsoValue<>(IsoType.DATE10, new Date());
-        if (DateTimeParseInfo.getDefaultTimeZone() != null) {
-          now.setTimeZone(DateTimeParseInfo.getDefaultTimeZone());
-        }
-        body.setField(7, now);
-      }
+      body.setField(7, ff.getField(FieldType.DATE10, new Date()));
     }
 
     return body;

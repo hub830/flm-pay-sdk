@@ -29,7 +29,7 @@ public class UnifiedPayOrder implements UnifiedOrder {
   /**
    * F18.商户分类编码(MCC)
    */
-  private String mcc;
+  private int mcc;
   /**
    * F22.服务点输入方式码
    */

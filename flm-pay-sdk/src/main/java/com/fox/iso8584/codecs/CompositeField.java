@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fox.iso8584.CustomBinaryField;
 import com.fox.iso8584.CustomField;
-import com.fox.iso8584.IsoType;
-import com.fox.iso8584.IsoValue;
-import com.fox.iso8584.parse.FieldParseInfo;
+import com.fox.iso8584.field.FieldParseFactory;
+import com.fox.iso8584.field.FieldParseInfo;
+import com.fox.iso8584.field.FieldValue;
 
 
 /**
@@ -35,27 +34,26 @@ import com.fox.iso8584.parse.FieldParseInfo;
  *
  * @author Enrique Zamudio Date: 25/11/13 11:25
  */
-public class CompositeField implements CustomBinaryField<CompositeField> {
+public class CompositeField implements CustomField<CompositeField> {
 
   private static final Logger log = LoggerFactory.getLogger(CompositeField.class);
   /** Stores the subfields. */
   @SuppressWarnings("rawtypes")
-  private List<IsoValue> values;
+  private List<FieldValue> values;
   /** Stores the parsers for the subfields. */
   private List<FieldParseInfo> parsers;
 
   @SuppressWarnings("rawtypes")
-  public void setValues(List<IsoValue> values) {
+  public void setValues(List<FieldValue> values) {
     this.values = values;
   }
 
   @SuppressWarnings("rawtypes")
-  public List<IsoValue> getValues() {
+  public List<FieldValue> getValues() {
     return values;
   }
 
-  @SuppressWarnings("rawtypes")
-  public CompositeField addValue(IsoValue<?> v) {
+  public CompositeField addValue(FieldValue<?> v) {
     if (values == null) {
       values = new ArrayList<>(4);
     }
@@ -63,30 +61,18 @@ public class CompositeField implements CustomBinaryField<CompositeField> {
     return this;
   }
 
-  public <T> CompositeField addValue(T val, CustomField<T> encoder, IsoType t, int length) {
-    return addValue(t.needsLength() ? new IsoValue<>(t, val, length, encoder)
-        : new IsoValue<>(t, val, encoder));
-  }
-
   @SuppressWarnings("unchecked")
-  public <T> IsoValue<T> getField(int idx) {
+  public <T> FieldValue<T> getField(int idx) {
     if (idx < 0 || idx >= values.size())
       return null;
     return values.get(idx);
   }
 
   public <T> T getObjectValue(int idx) {
-    IsoValue<T> v = getField(idx);
+    FieldValue<T> v = getField(idx);
     return v == null ? null : v.getValue();
   }
-
-  public void setParsers(List<FieldParseInfo> fpis) {
-    parsers = fpis;
-  }
-
-  public List<FieldParseInfo> getParsers() {
-    return parsers;
-  }
+ 
 
   public CompositeField addParser(FieldParseInfo fpi) {
     if (parsers == null) {
@@ -97,66 +83,16 @@ public class CompositeField implements CustomBinaryField<CompositeField> {
   }
 
   @Override
-  public CompositeField decodeBinaryField(byte[] buf, int offset, int length) {
+  public CompositeField decodeField(String value, String encoding) {
     @SuppressWarnings("rawtypes")
-    List<IsoValue> vals = new ArrayList<>(parsers.size());
-    int pos = offset;
-    try {
-      for (FieldParseInfo fpi : parsers) {
-        IsoValue<?> v = fpi.parseBinary(0, buf, pos, fpi.getDecoder());
-        if (v != null) {
-          if (v.getType() == IsoType.NUMERIC || v.getType() == IsoType.DATE10
-              || v.getType() == IsoType.DATE4 || v.getType() == IsoType.DATE_EXP
-              || v.getType() == IsoType.AMOUNT || v.getType() == IsoType.TIME
-              || v.getType() == IsoType.DATE12 || v.getType() == IsoType.DATE14) {
-            pos += (v.getLength() / 2) + (v.getLength() % 2);
-          } else {
-            pos += v.getLength();
-          }
-          if (v.getType() == IsoType.LLVAR || v.getType() == IsoType.LLBIN
-              || v.getType() == IsoType.LLBCDBIN) {
-            pos++;
-          } else if (v.getType() == IsoType.LLLVAR || v.getType() == IsoType.LLLBIN
-              || v.getType() == IsoType.LLLBCDBIN || v.getType() == IsoType.LLLLVAR
-              || v.getType() == IsoType.LLLLBIN || v.getType() == IsoType.LLLLBCDBIN) {
-            pos += 2;
-          }
-          vals.add(v);
-        }
-      }
-      final CompositeField f = new CompositeField();
-      f.setValues(vals);
-      return f;
-    } catch (ParseException ex) {
-      log.error("Decoding binary CompositeField", ex);
-      return null;
-    } catch (UnsupportedEncodingException ex) {
-      log.error("Decoding binary CompositeField", ex);
-      return null;
-    }
-  }
-
-  @Override
-  public CompositeField decodeField(String value) {
-    @SuppressWarnings("rawtypes")
-    List<IsoValue> vals = new ArrayList<>(parsers.size());
+    List<FieldValue> vals = new ArrayList<>(parsers.size());
     byte[] buf = value.getBytes();
     int pos = 0;
     try {
       for (FieldParseInfo fpi : parsers) {
-        IsoValue<?> v = fpi.parse(0, buf, pos, fpi.getDecoder());
+        FieldValue<?> v = FieldParseFactory.parse(fpi, buf, pos, null, encoding);
         if (v != null) {
-          pos += v.toString().getBytes(fpi.getCharacterEncoding()).length;
-          if (v.getType() == IsoType.LLVAR || v.getType() == IsoType.LLBIN
-              || v.getType() == IsoType.LLBCDBIN) {
-            pos += 2;
-          } else if (v.getType() == IsoType.LLLVAR || v.getType() == IsoType.LLLBIN
-              || v.getType() == IsoType.LLLBCDBIN) {
-            pos += 3;
-          } else if (v.getType() == IsoType.LLLLBIN || v.getType() == IsoType.LLLLBCDBIN
-              || v.getType() == IsoType.LLLLVAR) {
-            pos += 4;
-          }
+          pos += v.getValueLength();
           vals.add(v);
         }
       }
@@ -169,29 +105,16 @@ public class CompositeField implements CustomBinaryField<CompositeField> {
     }
   }
 
-  @Override
-  public byte[] encodeBinaryField(CompositeField value) {
-    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    try {
-      for (IsoValue<?> v : value.getValues()) {
-        v.write(bout, false, true);
-      }
-    } catch (IOException ex) {
-      log.error("Encoding binary CompositeField", ex);
-      // shouldn't happen
-    }
-    return bout.toByteArray();
-  }
 
   @Override
   public String encodeField(CompositeField value) {
     try {
       String encoding = null;
       final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      for (IsoValue<?> v : value.getValues()) {
-        v.write(bout, false, true);
+      for (FieldValue<?> v : value.getValues()) {
+        v.write(bout);
         if (encoding == null)
-          encoding = v.getCharacterEncoding();
+          encoding = v.getEncoding();
       }
       final byte[] buf = bout.toByteArray();
       return new String(buf, encoding == null ? "UTF-8" : encoding);
@@ -201,29 +124,17 @@ public class CompositeField implements CustomBinaryField<CompositeField> {
     }
   }
 
-  /** Sets the character encoding used for parsing ALPHA, LLVAR and LLLVAR fields. */
-  public void setCharacterEncoding(String encoding) {
-    if (parsers != null) {
-      for (FieldParseInfo fpi : parsers) {
-        fpi.setCharacterEncoding(encoding);
-      }
-    }
-    for (IsoValue<?> v : values) {
-      v.setCharacterEncoding(encoding);
-    }
-  }
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("CompositeField[");
     if (values != null) {
       boolean first = true;
-      for (IsoValue<?> v : values) {
+      for (FieldValue<?> v : values) {
         if (first)
           first = false;
         else
           sb.append(',');
-        sb.append(v.getType());
+        sb.append(v.toString());
       }
     }
     return sb.append(']').toString();

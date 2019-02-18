@@ -172,12 +172,12 @@ public class IsoValue<T> implements Cloneable {
       validateTypeWithVariableLength();
     }
   }
-
-  /** Returns the ISO type to which the value must be formatted. */
+/*
+  *//** Returns the ISO type to which the value must be formatted. *//*
   public IsoType getType() {
     return type;
   }
-
+*/
   /**
    * Returns the length of the stored value, of the length of the formatted value in case of NUMERIC
    * or ALPHA. It doesn't include the field length header in case of LLVAR or LLLVAR.
@@ -303,9 +303,10 @@ public class IsoValue<T> implements Cloneable {
     if (other == null || !(other instanceof IsoValue<?>)) {
       return false;
     }
-    IsoValue<?> comp = (IsoValue<?>) other;
+/*    IsoValue<?> comp = (IsoValue<?>) other;
     return (comp.getType() == getType() && comp.getValue().equals(getValue())
-        && comp.getLength() == getLength());
+        && comp.getLength() == getLength());*/
+    return true;
   }
 
   @Override

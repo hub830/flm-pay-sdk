@@ -18,9 +18,10 @@ package com.fox.iso8584;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 import java.util.Map;
-import org.apache.commons.codec.binary.Hex;
+import com.fox.iso8584.field.FieldValue;
 
 /**
  * Represents an ISO8583 message. This is the core class of the framework. Contains the bitmap which
@@ -31,18 +32,17 @@ import org.apache.commons.codec.binary.Hex;
  * @author Enrique Zamudio
  */
 public class IsoBody {
-
   static final byte[] HEX =
       new byte[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
+
   /** This is where the values are stored. */
   @SuppressWarnings("rawtypes")
-  protected IsoValue[] fields = new IsoValue[129];
-  protected int etx = -1;
+  private FieldValue[] fields = new FieldValue[129];
   /** Flag to enforce secondary bitmap even if empty. */
   private boolean forceb2;
-  protected boolean forceStringEncoding;
-  protected String encoding = System.getProperty("file.encoding");
+  private boolean forceStringEncoding;
+  private String encoding = System.getProperty("file.encoding");
 
   /** Creates a new empty message with no values set. */
   public IsoBody() {
@@ -87,13 +87,6 @@ public class IsoBody {
     forceStringEncoding = flag;
   }
 
-  /**
-   * Sets the ETX character, which is sent at the end of the message as a terminator. Default is -1,
-   * which means no terminator is sent.
-   */
-  public void setEtx(int value) {
-    etx = value;
-  }
 
   /**
    * Returns the stored value in the field, without converting or formatting it.
@@ -103,13 +96,13 @@ public class IsoBody {
    */
   public <T> T getObjectValue(int field) {
     @SuppressWarnings("unchecked")
-    IsoValue<T> v = fields[field];
+    FieldValue<T> v = fields[field];
     return v == null ? null : v.getValue();
   }
 
   /** Returns the IsoValue for the specified field. First real field is 2. */
   @SuppressWarnings("unchecked")
-  public <T> IsoValue<T> getField(int field) {
+  public <T> FieldValue<T> getField(int field) {
     return fields[field];
   }
 
@@ -119,91 +112,22 @@ public class IsoBody {
    * 
    * @return The receiver (useful for setting several fields in sequence).
    */
-  public IsoBody setField(int index, IsoValue<?> field) {
+  public IsoBody setField(int index, FieldValue<?> field) {
     if (index < 2 || index > 128) {
       throw new IndexOutOfBoundsException("Field index must be between 2 and 128");
-    }
-    if (field != null) {
-      field.setCharacterEncoding(encoding);
     }
     fields[index] = field;
     return this;
   }
 
   /** Convenience method for setting several fields in one call. */
-  public IsoBody setFields(Map<Integer, IsoValue<?>> values) {
-    for (Map.Entry<Integer, IsoValue<?>> e : values.entrySet()) {
+  public IsoBody setFields(Map<Integer, FieldValue<?>> values) {
+    for (Map.Entry<Integer, FieldValue<?>> e : values.entrySet()) {
       setField(e.getKey(), e.getValue());
     }
     return this;
   }
 
-  /**
-   * Sets the specified value in the specified field, creating an IsoValue internally.
-   * 
-   * @param index The field number (2 to 128)
-   * @param value The value to be stored.
-   * @param t The ISO type.
-   * @param length The length of the field, used for ALPHA and NUMERIC values only, ignored with any
-   *        other type.
-   * @return The receiver (useful for setting several values in sequence).
-   */
-  public IsoBody setValue(int index, Object value, IsoType t, int length) {
-    return setValue(index, value, null, t, length);
-  }
-
-  /**
-   * Sets the specified value in the specified field, creating an IsoValue internally.
-   * 
-   * @param index The field number (2 to 128)
-   * @param value The value to be stored.
-   * @param encoder An optional CustomField to encode/decode the value.
-   * @param t The ISO type.
-   * @param length The length of the field, used for ALPHA and NUMERIC values only, ignored with any
-   *        other type.
-   * @return The receiver (useful for setting several values in sequence).
-   */
-  public <T> IsoBody setValue(int index, T value, CustomField<T> encoder, IsoType t, int length) {
-    if (index < 2 || index > 128) {
-      throw new IndexOutOfBoundsException("Field index must be between 2 and 128");
-    }
-    if (value == null) {
-      fields[index] = null;
-    } else {
-      IsoValue<T> v = null;
-      if (t.needsLength()) {
-        v = new IsoValue<>(t, value, length, encoder);
-      } else {
-        v = new IsoValue<>(t, value, encoder);
-      }
-      v.setCharacterEncoding(encoding);
-      fields[index] = v;
-    }
-    return this;
-  }
-
-  /**
-   * A convenience method to set new values in fields that already contain values. The field's type,
-   * length and custom encoder are taken from the current value. This method can only be used with
-   * fields that have been previously set, usually from a template in the MessageFactory.
-   * 
-   * @param index The field's index
-   * @param value The new value to be set in that field.
-   * @return The message itself.
-   * @throws IllegalArgumentException if there is no current field at the specified index.
-   */
-  public <T> IsoBody updateValue(int index, T value) {
-    IsoValue<T> current = getField(index);
-    if (current == null) {
-      throw new IllegalArgumentException(
-          "Value-only field setter can only be used on existing fields");
-    } else {
-      setValue(index, value, current.getEncoder(), current.getType(), current.getLength());
-      getField(index).setCharacterEncoding(current.getCharacterEncoding());
-      getField(index).setTimeZone(current.getTimeZone());
-    }
-    return this;
-  }
 
   /**
    * Returns true is the message has a value in the specified field.
@@ -235,44 +159,6 @@ public class IsoBody {
   }
 
 
-  // These are for Groovy compat
-  /**
-   * Sets the specified value in the specified field, just like {@link #setField(int, IsoValue)}.
-   */
-  public <T> void putAt(int i, IsoValue<T> v) {
-    setField(i, v);
-  }
-
-  /** Returns the IsoValue in the specified field, just like {@link #getField(int)}. */
-  public <T> IsoValue<T> getAt(int i) {
-    return getField(i);
-  }
-
-  // These are for Scala compat
-  /**
-   * Sets the specified value in the specified field, just like {@link #setField(int, IsoValue)}.
-   */
-  public <T> void update(int i, IsoValue<T> v) {
-    setField(i, v);
-  }
-
-  /** Returns the IsoValue in the specified field, just like {@link #getField(int)}. */
-  public <T> IsoValue<T> apply(int i) {
-    return getField(i);
-  }
-
-  /**
-   * Copies the specified fields from the other message into the recipient. If a specified field is
-   * not present in the source message it is simply ignored.
-   */
-  public void copyFieldsFrom(IsoBody src, int... idx) {
-    for (int i : idx) {
-      IsoValue<Object> v = src.getField(i);
-      if (v != null) {
-        setValue(i, v.getValue(), v.getEncoder(), v.getType(), v.getLength());
-      }
-    }
-  }
 
   /** Remove the specified fields from the message. */
   public void removeFields(int... idx) {
@@ -307,7 +193,7 @@ public class IsoBody {
     return false;
   }
 
-  public byte[] writeData() {
+  public byte[] writeData() throws UnsupportedEncodingException, IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
     byte[] bitmap = writeBinBitmap();
@@ -331,18 +217,16 @@ public class IsoBody {
    * 输出消息体
    * 
    * @return
+   * @throws IOException
+   * @throws UnsupportedEncodingException
    */
-  byte[] writeBody() {
+  byte[] writeBody() throws UnsupportedEncodingException, IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     // Fields
     for (int i = 2; i < 129; i++) {
-      IsoValue<?> v = fields[i];
+      FieldValue<?> v = fields[i];
       if (v != null) {
-        try {
-          v.write(bout, v.isBinaryField(), forceStringEncoding);
-        } catch (IOException ex) {
-          // should never happen, writing to a ByteArrayOutputStream
-        }
+        v.write(bout);
       }
     }
     return bout.toByteArray();
@@ -414,7 +298,6 @@ public class IsoBody {
         b = 0;
       }
     }
-
     return bout.toByteArray();
   }
 

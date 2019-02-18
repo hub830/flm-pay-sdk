@@ -58,7 +58,7 @@ public class LongBcdCodec implements CustomBinaryField<Long> {
     }
 
     @Override
-    public Long decodeField(String value) {
+    public Long decodeField(String value,String encoding) {
         return Long.parseLong(value, 10);
     }
 

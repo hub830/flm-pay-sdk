@@ -17,6 +17,7 @@ package com.fox.iso8584;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Hex;
 
 public class IsoMessage {
@@ -105,8 +106,7 @@ public class IsoMessage {
     return bout.toByteArray();
   }
 
-  public void setCharacterEncoding(String encoding) {
-    // TODO Auto-generated method stub
+ 
 
-  }
+
 }
