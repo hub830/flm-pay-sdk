@@ -17,7 +17,7 @@ public class AmountValue<T> extends AbstractFieldValue<T> {
 
 
   public AmountValue(T value, CustomField<T> encoder, String encoding) {
-    super(FieldType.AMOUNT, value, encoder, 0, encoding, false);
+    super(FieldType.AMOUNT, value, encoder, 0, encoding);
   }
 
   @Override

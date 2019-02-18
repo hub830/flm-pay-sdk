@@ -15,16 +15,15 @@ import com.solab.iso8583.util.HexCodec;
  *
  */
 public abstract class VarValue<T> extends AbstractFieldValue<T> {
- 
+
 
   public VarValue() {}
 
-  public VarValue(FieldType type, T value, CustomField<T> encoder, String encoding,
-      boolean binaryField ) {
-    super(type, value, encoder, 0, encoding, binaryField);// 对于可变长字段，长度预设为0
+  public VarValue(FieldType type, T value, CustomField<T> encoder, String encoding) {
+    super(type, value, encoder, 0, encoding);// 对于可变长字段，长度预设为0
     // 根据内容的实际长度去重设长度字段
     length = encoder == null ? value.toString().length() : encoder.encodeField(value).length();
-//    this.forceStringEncoding = forceStringEncoding;
+    // this.forceStringEncoding = forceStringEncoding;
   }
 
   @Override
@@ -48,35 +47,7 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
    * 
    * @param outs
    * @throws IOException
-   *//*
-  protected void writeLengthHeader(final OutputStream outs, int valueLength, String encoding)
-      throws IOException {
-    final int headerLength = getHeaderLength();
-    if (binary) {
-      if (headerLength == 4) {
-        outs.write((((valueLength % 10000) / 1000) << 4) | ((valueLength % 1000) / 100));
-      } else if (headerLength == 3) {
-        outs.write(valueLength / 100); // 00 to 09 automatically in BCD
-      }
-      // BCD encode the rest of the length
-      outs.write((((valueLength % 100) / 10) << 4) | (valueLength % 10));
-    } else {
-      // write the length in ASCII
-      if (headerLength == 4) {
-        outs.write((valueLength / 1000) + 48);
-        outs.write(((valueLength % 1000) / 100) + 48);
-      } else if (headerLength == 3) {
-        outs.write((valueLength / 100) + 48);
-      }
-      if (valueLength >= 10) {
-        outs.write(((valueLength % 100) / 10) + 48);
-      } else {
-        outs.write(48);
-      }
-      outs.write((valueLength % 10) + 48);
-    }
-  }*/
-
+   */
   protected void writeLengthHeader(final OutputStream outs, int valueLength, String encoding)
       throws IOException {
     final int headerLength = getHeaderLength();
@@ -95,6 +66,7 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
     }
     outs.write((valueLength % 10) + 48);
   }
+
   protected abstract int getHeaderLength();
 
   /**
@@ -105,7 +77,7 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
     /*
      * length 在字段创建时会由构造方法根据值的实际长度设置
      */
-    return length+ getHeaderLength();
+    return length + getHeaderLength();
   }
 
   @Override

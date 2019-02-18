@@ -15,7 +15,7 @@ public class AlphaValue<T> extends AbstractFieldValue<T> {
 
 
   public AlphaValue(T value, CustomField<T> encoder, int length, String encoding) {
-    super(FieldType.ALPHA, value, encoder, length, encoding, false);
+    super(FieldType.ALPHA, value, encoder, length, encoding);
   }
 
   @Override

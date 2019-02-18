@@ -34,7 +34,7 @@ class LllBinVarValueTest {
 
   @Test
   void testFormat() throws UnsupportedEncodingException {
-    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding);
     assertNotNull(lllBin2VarValue);
  
     byte[] format = lllBin2VarValue.format();
@@ -45,7 +45,7 @@ class LllBinVarValueTest {
   
   @Test
   void testWriteData() throws IOException {
-    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding);
     assertNotNull(lllBin2VarValue);
 
     ByteArrayOutputStream bout = new ByteArrayOutputStream();    
@@ -58,7 +58,7 @@ class LllBinVarValueTest {
 
   @Test
   void testGetValueLength() {
-    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding);
     assertNotNull(lllBin2VarValue);
 
     int valueLength = lllBin2VarValue.getValueLength();

@@ -33,7 +33,7 @@ class BinaryValueTest {
   @Test
   void testFormat_binary() throws DecoderException {
     byte[] decodeHex = Hex.decodeHex(value);
-    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding, true);
+    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding);
     assertNotNull(binaryValue);
 
     byte[] format = binaryValue.format();
@@ -43,7 +43,7 @@ class BinaryValueTest {
 
   @Test
   void testFormat() throws DecoderException {
-    BinaryValue binaryValue = new BinaryValue(value, encoder, length, encoding, true);
+    BinaryValue binaryValue = new BinaryValue(value, encoder, length, encoding);
     assertNotNull(binaryValue);
 
     byte[] format = binaryValue.format();
@@ -54,7 +54,7 @@ class BinaryValueTest {
   @Test
   void testToString_binary() throws DecoderException {
     byte[] decodeHex = Hex.decodeHex(value);
-    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding, true);
+    BinaryValue binaryValue = new BinaryValue(decodeHex, encoder, length, encoding);
     assertNotNull(binaryValue);
 
     String toString = binaryValue.toString();

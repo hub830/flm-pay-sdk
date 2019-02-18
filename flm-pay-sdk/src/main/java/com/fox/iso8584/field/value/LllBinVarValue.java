@@ -12,8 +12,8 @@ import com.fox.iso8584.field.FieldType;
 public class LllBinVarValue<T> extends BinVarValue<T> {
 
 
-  public LllBinVarValue(T value, CustomField<T> encoder, String encoding, boolean binaryField) {
-    super(FieldType.LLLBIN, value, encoder, encoding, binaryField);
+  public LllBinVarValue(T value, CustomField<T> encoder, String encoding ) {
+    super(FieldType.LLLBIN, value, encoder, encoding);
   }
 
 

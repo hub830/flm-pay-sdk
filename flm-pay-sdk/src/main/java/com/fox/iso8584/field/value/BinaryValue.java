@@ -14,21 +14,16 @@ import com.solab.iso8583.util.HexCodec;
 public class BinaryValue<T> extends AbstractFieldValue<T> {
 
 
-  public BinaryValue(T value, CustomField<T> encoder, int length, String encoding,
-      boolean binaryField) {
-    super(FieldType.BINARY, value, encoder, length, encoding, binaryField);
+  public BinaryValue(T value, CustomField<T> encoder, int length, String encoding
+      ) {
+    super(FieldType.BINARY, value, encoder, length, encoding);
   }
 
   @Override
   protected byte[] format() {
     byte[] v;
-    if (binary) {
-      v = formatBinary();
 
-    } else {
-      v = formatAscii();
-    }
-
+    v = formatBinary();
 
     byte[] result = new byte[length];
 
@@ -49,15 +44,6 @@ public class BinaryValue<T> extends AbstractFieldValue<T> {
     }
   }
 
-  private byte[] formatAscii() {
-
-    if (value instanceof byte[]) {
-      final byte[] _v = (byte[]) value;
-      return HexCodec.hexEncode(_v, 0, _v.length).getBytes();
-    } else {
-      return value.toString().getBytes();
-    }
-  }
 
   @Override
   public String toString() {

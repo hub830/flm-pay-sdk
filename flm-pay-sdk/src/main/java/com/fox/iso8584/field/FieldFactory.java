@@ -83,7 +83,7 @@ public class FieldFactory {
       case AMOUNT:
         return new AmountValue<T>(value, encoder, encoding);
       case BINARY:
-        return new BinaryValue<T>(value, encoder, length, encoding, binaryField);
+        return new BinaryValue<T>(value, encoder, length, encoding);
       case DATE10:
         return new Date10Value<T>(value, encoder, encoding);
       case DATE12:
@@ -103,7 +103,7 @@ public class FieldFactory {
       case LLLBCDBIN:
         break;
       case LLLBIN:
-        return new LllBinVarValue<T>(value, encoder, encoding, binaryField);
+        return new LllBinVarValue<T>(value, encoder, encoding);
       case LLLLBCDBIN:
         break;
       case LLLLBIN:
@@ -111,9 +111,9 @@ public class FieldFactory {
       case LLLLVAR:
         break;
       case LLLVAR:
-        return new LllvarValue<T>(value, encoder, encoding, binaryField);
+        return new LllvarValue<T>(value, encoder, encoding);
       case LLVAR:
-        return new LlvarValue<T>(value, encoder, encoding, binaryField);
+        return new LlvarValue<T>(value, encoder, encoding);
       case NUMERIC:
         return new NumericValue<T>(value, encoder, length, encoding);
       case TIME:

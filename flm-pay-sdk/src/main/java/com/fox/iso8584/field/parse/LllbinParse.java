@@ -43,18 +43,16 @@ public class LllbinParse extends FieldParse {
     final int l = decodeLength(buf, pos, 3);
 
     byte[] _v = new byte[l];
-    System.arraycopy(buf, pos+3, _v, 0, l);
-    
+    System.arraycopy(buf, pos + 3, _v, 0, l);
+
     if (custom == null) {
-      LllBinVarValue lllBinVarValue = new LllBinVarValue<>(_v, null, encoding, true);// TODO
-                                                                                             // 是否二进制
+      LllBinVarValue lllBinVarValue = new LllBinVarValue<>(_v, null, encoding);
       return lllBinVarValue;
     } else {
       try {
         T dec = custom.decodeField(l == 0 ? "" : new String(buf, pos + 3, l), encoding);
 
-        LllBinVarValue lllBinVarValue = new LllBinVarValue<>(dec, custom, encoding, false);// TODO
-                                                                                              // 是否二进制
+        LllBinVarValue lllBinVarValue = new LllBinVarValue<>(dec, custom, encoding);
         return lllBinVarValue;
       } catch (IndexOutOfBoundsException ex) {
         throw new ParseException(

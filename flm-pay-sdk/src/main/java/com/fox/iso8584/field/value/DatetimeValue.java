@@ -16,7 +16,7 @@ public abstract class DatetimeValue<T> extends AbstractFieldValue<T> {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
   public DatetimeValue(FieldType type, T value, CustomField<T> encoder, String encoding) {
-    super(type, value, encoder, 0, encoding, false);
+    super(type, value, encoder, 0, encoding);
   }
 
   @Override

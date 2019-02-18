@@ -14,7 +14,7 @@ public class NumericValue<T> extends AbstractFieldValue<T> {
 
 
   public NumericValue(T value, CustomField<T> encoder, int length, String encoding) {
-    super(FieldType.NUMERIC, value, encoder, length, encoding, false);
+    super(FieldType.NUMERIC, value, encoder, length, encoding);
   }
 
   @Override

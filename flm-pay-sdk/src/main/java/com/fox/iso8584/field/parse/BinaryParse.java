@@ -30,7 +30,7 @@ public class BinaryParse extends FieldParse {
     byte[] _v = new byte[length];
     System.arraycopy(buf, pos, _v, 0, length); 
     if (custom == null) {
-     BinaryValue  binaryValue = new BinaryValue<>(_v, null, length, encoding, true);//TODO 是否二进制字段
+     BinaryValue  binaryValue = new BinaryValue<>(_v, null, length, encoding);
       
       return binaryValue;     
 
@@ -39,7 +39,7 @@ public class BinaryParse extends FieldParse {
       T dec = custom.decodeField(v,encoding);
       
 
-      return    new BinaryValue<>(dec, custom, length, encoding, true);//TODO 是否二进制字段
+      return    new BinaryValue<>(dec, custom, length, encoding);
       
       
       

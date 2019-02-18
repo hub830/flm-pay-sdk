@@ -11,9 +11,9 @@ import com.fox.iso8584.field.FieldType;
  */
 public class LllvarValue<T> extends VarValue<T> {
 
-  public LllvarValue(T value, CustomField<T> encoder, String encoding, boolean binaryField
+  public LllvarValue(T value, CustomField<T> encoder, String encoding 
        ) {
-    super(FieldType.LLLVAR, value, encoder, encoding, binaryField);
+    super(FieldType.LLLVAR, value, encoder, encoding);
   }
 
   @Override

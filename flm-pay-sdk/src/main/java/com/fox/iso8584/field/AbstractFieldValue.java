@@ -17,19 +17,19 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
 
   protected String encoding;
 
-  protected boolean binary;
+//  protected boolean binary;
 
   public AbstractFieldValue() {}
 
   public AbstractFieldValue(FieldType type, T value, CustomField<T> encoder, int length,
-      String encoding, boolean binary) {
+      String encoding) {
     super();
     this.type = type;
     this.value = value;
     this.encoder = encoder;
     this.length = length;
     this.encoding = encoding;
-    this.binary = binary;
+//    this.binary = binary;
   }
 
   public FieldType getType() {
@@ -52,10 +52,10 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
   public String getEncoding() {
     return encoding;
   }
-
+/*
   public boolean isBinary() {
     return binary;
-  }
+  }*/
 
   /**
    * 对于不可变长字段，值 的长度直接为其定义时设置的长度
