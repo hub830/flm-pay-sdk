@@ -1,4 +1,3 @@
-
 package com.fox.iso8584.field.parse;
 
 import java.io.UnsupportedEncodingException;
