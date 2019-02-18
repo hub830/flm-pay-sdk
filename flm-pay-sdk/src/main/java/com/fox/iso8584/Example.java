@@ -136,15 +136,15 @@ public class Example {
                                                                                 // 商户名称
         // .setField(48, ff.GetField(FieldType.LLLVAR, null))// 附加数据－私有
         .setField(49, ff.getField(FieldType.ALPHA, "156", 3))// 交易货币代码
-        .setField(52, ff.getField(FieldType.BINARY, order.getPin(), null, 8, true, false))// 个人标识码
+        .setField(52, ff.getField(FieldType.BINARY, order.getPin(), null, 8, true))// 个人标识码
         .setField(53, ff.getField(FieldType.NUMERIC, 2600000000000000l, 16))// 安全控制信息
         .setField(55,
-            ff.getField(FieldType.LLLBIN2, order.getIcData(), null, 0, true, true))// IC卡数据域
+            ff.getField(FieldType.LLLBIN2, order.getIcData(), null, 0, true))// IC卡数据域
         .setField(60, ff.getField(FieldType.LLLVAR, "00000500030000000000"))// 自定义域 .磁条卡60域名编码 或
                                                                             // IC卡60域编码
         .setField(61,
             getField61(ff, order.getPhone(), settleType, order.getFee(), order.getSettleFee()))
-        .setField(128, ff.getField(FieldType.BINARY, "4239413241363734", null, 8, true, false))// 自定义域
+        .setField(128, ff.getField(FieldType.BINARY, "4239413241363734", null, 8, true))// 自定义域
     // .磁条卡60域名编码
     // 或
     // IC卡60域编码
@@ -174,6 +174,6 @@ public class Example {
       FieldValue<String> field61_4 = ff.getField(FieldType.ALPHA, "", 12);
       field61.addValue(field61_4);
     }
-    return ff.getField(FieldType.LLLVAR, field61, field61, 0, false, false);
+    return ff.getField(FieldType.LLLVAR, field61, field61, 0, false);
   }
 }

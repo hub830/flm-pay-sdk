@@ -50,7 +50,7 @@ public class FieldFactory {
    * @return
    */
   public <T> FieldValue<T> getField(FieldType type, T value) {
-    return getField(type, value, null, 0, false, false);
+    return getField(type, value, null, 0, false);
   }
 
   /**
@@ -62,7 +62,7 @@ public class FieldFactory {
    * @return
    */
   public <T> FieldValue<T> getField(FieldType type, T value, int length) {
-    return getField(type, value, null, length, false, false);
+    return getField(type, value, null, length, false);
   }
 
   /**
@@ -77,7 +77,7 @@ public class FieldFactory {
    * @return
    */
   public <T> FieldValue<T> getField(FieldType type, T value, CustomField<T> encoder, int length,
-      boolean binaryField, boolean forceStringEncoding) {
+      boolean binaryField) {
     switch (type) {
       case ALPHA:
         return new AlphaValue<T>(value, encoder, length, encoding);
