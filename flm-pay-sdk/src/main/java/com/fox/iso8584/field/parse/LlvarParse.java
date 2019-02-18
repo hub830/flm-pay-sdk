@@ -32,8 +32,7 @@ public class LlvarParse extends FieldParse {
     return INSTANCE;
   }
 
-
-  public <T> LlvarValue<T> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
+  public <T> LlvarValue<?> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
       final CustomField<T> custom, String encoding)
       throws ParseException, UnsupportedEncodingException {
     if (pos < 0) {
@@ -62,7 +61,7 @@ public class LlvarParse extends FieldParse {
       _v = new String(buf, pos + 2, buf.length - pos - 2, encoding).substring(0, len);
     }
     if (custom == null) {
-      LlvarValue value = new LlvarValue<>(_v, null, encoding);
+      LlvarValue<?> value = new LlvarValue<>(_v, null, encoding);
       return value;
       // return new IsoValue<>(type, _v, len, null);
     } else {

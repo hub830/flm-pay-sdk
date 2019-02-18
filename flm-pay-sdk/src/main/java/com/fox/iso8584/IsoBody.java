@@ -41,7 +41,6 @@ public class IsoBody {
   private FieldValue[] fields = new FieldValue[129];
   /** Flag to enforce secondary bitmap even if empty. */
   private boolean forceb2;
-  private boolean forceStringEncoding;
   private String encoding = System.getProperty("file.encoding");
 
   /** Creates a new empty message with no values set. */
@@ -78,14 +77,6 @@ public class IsoBody {
     return encoding;
   }
 
-  /**
-   * Specified whether the variable-length fields should encode their length headers using string
-   * conversion with the proper character encoding. Default is false, which is the old behavior
-   * (encoding as ASCII). This is only useful for text format.
-   */
-  public void setForceStringEncoding(boolean flag) {
-    forceStringEncoding = flag;
-  }
 
 
   /**
@@ -243,11 +234,6 @@ public class IsoBody {
     // Bitmap
     BitSet bs = createBitmapBitSet();
     // Write bitmap to stream
-    ByteArrayOutputStream bout2 = null;
-    if (forceStringEncoding) {
-      bout2 = bout;
-      bout = new ByteArrayOutputStream();
-    }
     int pos = 0;
     int lim = bs.size() / 4;
     for (int i = 0; i < lim; i++) {
@@ -262,15 +248,7 @@ public class IsoBody {
         nibble |= 1;
       bout.write(HEX[nibble]);
     }
-    if (forceStringEncoding) {
-      final String _hb = new String(bout.toByteArray());
-      bout = bout2;
-      try {
-        bout.write(_hb.getBytes(encoding));
-      } catch (IOException ignore) {
-        // never happen
-      }
-    }
+
     return bout.toByteArray();
   }
 

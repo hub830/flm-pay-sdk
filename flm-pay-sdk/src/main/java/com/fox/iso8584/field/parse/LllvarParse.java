@@ -34,7 +34,7 @@ public class LllvarParse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
       String encoding) throws ParseException, UnsupportedEncodingException {
 
 
@@ -55,22 +55,13 @@ public class LllvarParse extends FieldParse {
     }
     if (custom == null) {
 
-      LllvarValue lllvarValue = new LllvarValue<>(_v, null, encoding);
+      LllvarValue<?> lllvarValue = new LllvarValue<>(_v, null, encoding);
 
       return lllvarValue;
     } else {
       T decoded = custom.decodeField(_v, encoding);
-
-      LllvarValue lllvarValue = new LllvarValue<>(decoded, custom, encoding);
-
+      LllvarValue<?> lllvarValue = new LllvarValue<>(decoded, custom, encoding);
       return lllvarValue;
-
     }
-
-
-
   }
-
-
-
 }

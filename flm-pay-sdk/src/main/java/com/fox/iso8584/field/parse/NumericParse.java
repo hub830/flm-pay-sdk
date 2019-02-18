@@ -34,7 +34,7 @@ public class NumericParse extends FieldParse {
   }
 
 
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
       final CustomField<T> custom, String encoding)
       throws ParseException, UnsupportedEncodingException {
 
@@ -47,12 +47,12 @@ public class NumericParse extends FieldParse {
         _v = new String(buf, pos, buf.length - pos, encoding).substring(0, length);
       }
       if (custom == null) {
-        NumericValue numericValue = new NumericValue<>(_v, null, length, encoding);
+        NumericValue<?> numericValue = new NumericValue<>(_v, null, length, encoding);
         return numericValue;
       } else {
         T decoded = custom.decodeField(_v, encoding);
 
-        NumericValue numericValue = new NumericValue<>(decoded, custom, length, encoding);
+        NumericValue<?> numericValue = new NumericValue<>(decoded, custom, length, encoding);
         return numericValue;
       }
     } catch (StringIndexOutOfBoundsException ex) {

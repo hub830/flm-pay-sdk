@@ -21,13 +21,13 @@ public class AmountParse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos,
       CustomField<T> custom, String encoding) throws ParseException, UnsupportedEncodingException {
 
  
     String c = new String(buf, pos, 12, encoding);
     try {
-       AmountValue amountValue = new AmountValue<>(new BigDecimal(c).movePointLeft(2), null,  encoding);
+       AmountValue<?> amountValue = new AmountValue<>(new BigDecimal(c).movePointLeft(2), null,  encoding);
        return amountValue;
     } catch (NumberFormatException ex) {
         throw new ParseException(String.format("Cannot read amount '%s' pos %d",

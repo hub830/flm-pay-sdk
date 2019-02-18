@@ -20,32 +20,22 @@ public class BinaryParse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
       String encoding) throws ParseException, UnsupportedEncodingException {
 
     int length = fpi.getLength();
     byte[] _v = new byte[length];
-    System.arraycopy(buf, pos, _v, 0, length); 
+    System.arraycopy(buf, pos, _v, 0, length);
     if (custom == null) {
-     BinaryValue  binaryValue = new BinaryValue<>(_v, null, length, encoding);
-      
-      return binaryValue;     
+      BinaryValue<?> binaryValue = new BinaryValue<>(_v, null, length, encoding);
+
+      return binaryValue;
 
     } else {
       String v = new String(buf, pos, length * 2, encoding);
-      T dec = custom.decodeField(v,encoding);
-      
+      T dec = custom.decodeField(v, encoding);
 
-      return    new BinaryValue<>(dec, custom, length, encoding);
-      
-      
-      
-      
+      return new BinaryValue<>(dec, custom, length, encoding);
     }
-
-
   }
-
-
-
 }

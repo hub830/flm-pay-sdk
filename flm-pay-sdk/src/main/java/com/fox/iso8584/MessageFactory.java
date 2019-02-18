@@ -52,10 +52,6 @@ import com.fox.iso8584.field.FieldValue;
 public class MessageFactory {
 
   protected final Logger log = LoggerFactory.getLogger(getClass());
-
-
- 
-
   /** This map stores the message template for each message type. */
   private Map<Integer, IsoBody> typeTemplates = new HashMap<>();
   /** Stores the information needed to parse messages sorted by type. */
@@ -73,13 +69,8 @@ public class MessageFactory {
   private boolean setDate;
 
   private int etx = -1;
-  /**
-   * Flag to specify if missing fields should be ignored as long as they're at the end of the
-   * message.
-   */
-  private boolean ignoreLast;
+  
   private boolean forceb2;
-  private boolean forceStringEncoding;
   /**
    * 源ID 用于构造消息头
    */
@@ -91,11 +82,7 @@ public class MessageFactory {
 
   private String encoding = System.getProperty("file.encoding");
 
-
-
-  public boolean isForceStringEncoding() {
-    return forceStringEncoding;
-  }
+ 
 
   public void setSourceStationId(String sourceStationId) {
     this.sourceStationId = sourceStationId;
@@ -127,25 +114,6 @@ public class MessageFactory {
 
   public boolean isForceSecondaryBitmap() {
     return forceb2;
-  }
-
-  /**
-   * Setting this property to true avoids getting a ParseException when parsing messages that don't
-   * have the last field specified in the bitmap. This is common with certain providers where field
-   * 128 is specified in the bitmap but not actually included in the messages. Default is false,
-   * which has been the behavior in previous versions when this option didn't exist.
-   */
-  public void setIgnoreLastMissingField(boolean flag) {
-    ignoreLast = flag;
-  }
-
-  /**
-   * This flag indicates if the MessageFactory throws an exception if the last field of a message is
-   * not really present even though it's specified in the bitmap. Default is false which means an
-   * exception is thrown.
-   */
-  public boolean getIgnoreLastMissingField() {
-    return ignoreLast;
   }
 
   /** Specifies a map for custom field encoder/decoders. The keys are the field numbers. */
@@ -235,13 +203,9 @@ public class MessageFactory {
     }
 
     final int type;
-    if (forceStringEncoding) {
-      type = Integer.parseInt(new String(buf, isoHeaderLength, 4, encoding), 16);
-    } else {
-      type = ((buf[isoHeaderLength] - 48) << 12) | ((buf[isoHeaderLength + 1] - 48) << 8)
-          | ((buf[isoHeaderLength + 2] - 48) << 4) | (buf[isoHeaderLength + 3] - 48);
-    }
-
+    type = ((buf[isoHeaderLength] - 48) << 12) | ((buf[isoHeaderLength + 1] - 48) << 8)
+        | ((buf[isoHeaderLength + 2] - 48) << 4) | (buf[isoHeaderLength + 3] - 48);
+    
     IsoBody body = new IsoBody();
 
     body.setCharacterEncoding(encoding);
@@ -280,17 +244,12 @@ public class MessageFactory {
     for (Integer i : index) {
       FieldParseInfo fpi = parseGuide.get(i);
       if (bs.get(i - 1)) {
-        if (ignoreLast && pos >= buf.length && i.intValue() == index.get(index.size() - 1)) {
-          log.warn("Field {} is not really in the message even though it's in the bitmap", i);
-          bs.clear(i - 1);
-        } else {
-          CustomField<?> decoder = getCustomField(i);
+        CustomField<?> decoder = getCustomField(i);
 
-          FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, encoding);
-          body.setField(i, field);
+        FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, encoding);
+        body.setField(i, field);
 
-          pos += field.getValueLength();
-        }
+        pos += field.getValueLength();
       }
 
     }
@@ -332,79 +291,6 @@ public class MessageFactory {
     return pos;
   }
 
-  private int parseBitmap(BitSet bs, byte[] buf, int isoHeaderLength)
-      throws ParseException, UnsupportedEncodingException {
-
-    final int minlength = isoHeaderLength + 4 + 8;
-    // final BitSet bs = new BitSet(64);
-    int pos = 0;
-
-    // ASCII parsing
-    try {
-      final byte[] bitmapBuffer;
-      if (forceStringEncoding) {
-        byte[] _bb = new String(buf, isoHeaderLength + 4, 16, encoding).getBytes();
-        bitmapBuffer = new byte[36 + isoHeaderLength];
-        System.arraycopy(_bb, 0, bitmapBuffer, 4 + isoHeaderLength, 16);
-      } else {
-        bitmapBuffer = buf;
-      }
-      for (int i = isoHeaderLength + 4; i < isoHeaderLength + 20; i++) {
-        if (bitmapBuffer[i] >= '0' && bitmapBuffer[i] <= '9') {
-          bs.set(pos++, ((bitmapBuffer[i] - 48) & 8) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 48) & 4) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 48) & 2) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 48) & 1) > 0);
-        } else if (bitmapBuffer[i] >= 'A' && bitmapBuffer[i] <= 'F') {
-          bs.set(pos++, ((bitmapBuffer[i] - 55) & 8) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 55) & 4) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 55) & 2) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 55) & 1) > 0);
-        } else if (bitmapBuffer[i] >= 'a' && bitmapBuffer[i] <= 'f') {
-          bs.set(pos++, ((bitmapBuffer[i] - 87) & 8) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 87) & 4) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 87) & 2) > 0);
-          bs.set(pos++, ((bitmapBuffer[i] - 87) & 1) > 0);
-        }
-      }
-      // Check for secondary bitmap and parse it if necessary
-      if (bs.get(0)) {
-        if (buf.length < minlength + 16) {
-          throw new ParseException("Insufficient length for secondary bitmap", minlength);
-        }
-        if (forceStringEncoding) {
-          byte[] _bb = new String(buf, isoHeaderLength + 20, 16, encoding).getBytes();
-          System.arraycopy(_bb, 0, bitmapBuffer, 20 + isoHeaderLength, 16);
-        }
-        for (int i = isoHeaderLength + 20; i < isoHeaderLength + 36; i++) {
-          if (bitmapBuffer[i] >= '0' && bitmapBuffer[i] <= '9') {
-            bs.set(pos++, ((bitmapBuffer[i] - 48) & 8) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 48) & 4) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 48) & 2) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 48) & 1) > 0);
-          } else if (bitmapBuffer[i] >= 'A' && bitmapBuffer[i] <= 'F') {
-            bs.set(pos++, ((bitmapBuffer[i] - 55) & 8) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 55) & 4) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 55) & 2) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 55) & 1) > 0);
-          } else if (bitmapBuffer[i] >= 'a' && bitmapBuffer[i] <= 'f') {
-            bs.set(pos++, ((bitmapBuffer[i] - 87) & 8) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 87) & 4) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 87) & 2) > 0);
-            bs.set(pos++, ((bitmapBuffer[i] - 87) & 1) > 0);
-          }
-        }
-        pos = 16 + minlength;
-      } else {
-        pos = minlength;
-      }
-    } catch (NumberFormatException ex) {
-      ParseException _e = new ParseException("Invalid ISO8583 bitmap", pos);
-      _e.initCause(ex);
-      throw _e;
-    }
-    return pos;
-  }
 
   /**
    * Creates a Iso message, override this method in the subclass to provide your own implementations
@@ -413,13 +299,11 @@ public class MessageFactory {
    * @param header The optional ISO header that goes before the message type
    * @return IsoMessage
    */
-  @SuppressWarnings("unchecked")
   protected IsoBody createIsoBody(IsoBody templ) {
 
     IsoBody body = new IsoBody();
     body.setForceSecondaryBitmap(forceb2);
     body.setCharacterEncoding(encoding);
-    body.setForceStringEncoding(forceStringEncoding);
 
     // Copy the values from the template
     if (templ != null) {
@@ -521,18 +405,6 @@ public class MessageFactory {
    */
   public IsoBody getMessageTemplate(int type) {
     return typeTemplates.get(type);
-  }
-
-  /**
-   * Invoke this method in case you want to freeze the configuration, making message and parsing
-   * templates, as well as iso headers and custom fields, immutable.
-   */
-  public void freeze() {
-    typeTemplates = Collections.unmodifiableMap(typeTemplates);
-    parseMap = Collections.unmodifiableMap(parseMap);
-    parseOrder = Collections.unmodifiableMap(parseOrder);
-    isoHeaders = Collections.unmodifiableMap(isoHeaders);
-    customFields = Collections.unmodifiableMap(customFields);
   }
 
   /**

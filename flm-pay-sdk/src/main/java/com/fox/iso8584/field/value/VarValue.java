@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import com.fox.iso8584.CustomField;
 import com.fox.iso8584.field.AbstractFieldValue;
 import com.fox.iso8584.field.FieldType;
-import com.solab.iso8583.util.HexCodec;
 
 /**
  * 变长类字段

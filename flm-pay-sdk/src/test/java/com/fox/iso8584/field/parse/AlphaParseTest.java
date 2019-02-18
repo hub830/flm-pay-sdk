@@ -50,7 +50,7 @@ class AlphaParseTest {
    */
   @Test
   void testParseCustomerName() throws UnsupportedEncodingException, ParseException {
-    FieldValue<Object> fieldValue = alphaParse.parse(fieldParseInfo, buf, pos, null, encoding);
+    FieldValue<?> fieldValue = alphaParse.parse(fieldParseInfo, buf, pos, null, encoding);
     assertNotNull(fieldValue);
     assertEquals(fieldValue.toString(), "蔡少雷", "INCONCEIVABLE!");
     

@@ -4,7 +4,6 @@ package com.fox.iso8584.field.parse;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Date;
 import com.fox.iso8584.CustomField;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
@@ -22,7 +21,7 @@ public class Date10Parse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
       String encoding) throws ParseException, UnsupportedEncodingException {
 
     // A SimpleDateFormat in the case of dates won't help because of the missing data
@@ -36,7 +35,7 @@ public class Date10Parse extends FieldParse {
     cal.set(Calendar.MINUTE, Integer.parseInt(new String(buf, pos+6, 2, encoding), 10));
     cal.set(Calendar.SECOND, Integer.parseInt(new String(buf, pos+8, 2, encoding), 10));
     cal.set(Calendar.MILLISECOND, 0);
-    Date10Value date10Value = new Date10Value<>(cal.getTime(), null, encoding);
+    Date10Value<?> date10Value = new Date10Value<>(cal.getTime(), null, encoding);
 
     return date10Value;
 

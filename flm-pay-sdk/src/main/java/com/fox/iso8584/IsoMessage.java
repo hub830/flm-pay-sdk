@@ -17,7 +17,6 @@ package com.fox.iso8584;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Hex;
 
 public class IsoMessage {
@@ -105,8 +104,4 @@ public class IsoMessage {
     bout.write(Hex.encodeHexString(bodyData).toUpperCase().getBytes());
     return bout.toByteArray();
   }
-
- 
-
-
 }

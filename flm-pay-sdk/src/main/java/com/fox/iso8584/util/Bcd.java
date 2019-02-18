@@ -19,7 +19,6 @@
 package com.fox.iso8584.util;
 
 import java.math.BigInteger;
-import java.text.ParseException;
 
 /**
  * Routines for Binary Coded Digits.

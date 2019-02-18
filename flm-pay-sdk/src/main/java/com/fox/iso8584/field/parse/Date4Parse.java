@@ -38,7 +38,7 @@ public class Date4Parse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<T> parse(FieldParseInfo fpi, byte[] buf, int pos,
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos,
       CustomField<T> custom, String encoding) throws ParseException, UnsupportedEncodingException {
 
  
@@ -53,7 +53,7 @@ public class Date4Parse extends FieldParse {
     cal.set(Calendar.DATE, Integer.parseInt(new String(buf, pos+2, 2, encoding), 10));
      
 
-    Date4Value date4Value = new Date4Value<>(cal.getTime(), null, encoding);
+    Date4Value<?> date4Value = new Date4Value<>(cal.getTime(), null, encoding);
     return date4Value;
     
     

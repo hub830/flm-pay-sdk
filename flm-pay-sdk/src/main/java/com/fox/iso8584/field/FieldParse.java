@@ -6,7 +6,7 @@ import com.fox.iso8584.CustomField;
 
 public abstract class FieldParse {
 
-  public abstract <T> FieldValue<T> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
+  public abstract <T> FieldValue<?> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
       final CustomField<T> custom, String encoding) throws ParseException, UnsupportedEncodingException;
 
 
