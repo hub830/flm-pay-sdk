@@ -25,11 +25,11 @@ public abstract class VarValue<T> extends AbstractFieldValue<T> {
   public VarValue() {}
 
   public VarValue(FieldType type, T value, CustomField<T> encoder, String encoding,
-      boolean binaryField, boolean forceStringEncoding) {
+      boolean binaryField ) {
     super(type, value, encoder, 0, encoding, binaryField);// 对于可变长字段，长度预设为0
     // 根据内容的实际长度去重设长度字段
     length = encoder == null ? value.toString().length() : encoder.encodeField(value).length();
-    this.forceStringEncoding = forceStringEncoding;
+//    this.forceStringEncoding = forceStringEncoding;
   }
 
   @Override

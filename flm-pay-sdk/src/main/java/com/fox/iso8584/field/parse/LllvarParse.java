@@ -59,14 +59,14 @@ public class LllvarParse extends FieldParse {
     }
     if (custom == null) {
 
-        LllvarValue  lllvarValue = new LllvarValue<>(_v, null, encoding, false, false);//TODO 是否二进制
+        LllvarValue  lllvarValue = new LllvarValue<>(_v, null, encoding, false);//TODO 是否二进制
       
       
         return lllvarValue;
     } else {
         T decoded = custom.decodeField(_v,encoding);
 
-        LllvarValue  lllvarValue = new LllvarValue<>(decoded, custom, encoding, false, false);//TODO 是否二进制
+        LllvarValue  lllvarValue = new LllvarValue<>(decoded, custom, encoding, false);//TODO 是否二进制
       
       
         return lllvarValue;

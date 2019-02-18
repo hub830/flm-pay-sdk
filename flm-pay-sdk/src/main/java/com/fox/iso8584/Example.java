@@ -36,7 +36,6 @@ public class Example {
         field.write(bout);         
         byte[] format = bout.toByteArray();
         String encodeHex = Hex.encodeHexString(format).toUpperCase();
-        System.out.println(encodeHex);
         System.out.printf("F %3d(%s): %s -> '%s'\n", i, m.getField(i).getType(),
             field.toString(), encodeHex);
       }
@@ -48,6 +47,7 @@ public class Example {
     mfact.setSourceStationId("48501111");
     mfact.setDestinationId("62100000");
     mfact.setAssignDate(true);
+    mfact.setCharacterEncoding("GBK");
     mfact.setTraceNumberGenerator(
         new SimpleTraceGenerator((int) (System.currentTimeMillis() % 100000)));
     // mfact.setCharacterEncoding("GBK");

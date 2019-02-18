@@ -114,9 +114,9 @@ public class FieldFactory {
       case LLLLVAR:
         break;
       case LLLVAR:
-        return new LllvarValue<T>(value, encoder, encoding, binaryField, forceStringEncoding);
+        return new LllvarValue<T>(value, encoder, encoding, binaryField);
       case LLVAR:
-        return new LlvarValue<T>(value, encoder, encoding, binaryField, forceStringEncoding);
+        return new LlvarValue<T>(value, encoder, encoding, binaryField);
       case NUMERIC:
         return new NumericValue<T>(value, encoder, length, encoding);
       case TIME:

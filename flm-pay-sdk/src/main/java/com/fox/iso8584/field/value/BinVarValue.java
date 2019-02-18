@@ -15,7 +15,7 @@ public abstract class BinVarValue<T> extends VarValue<T> {
 
   public BinVarValue(FieldType type, T value, CustomField<T> encoder, String encoding,
       boolean binaryField) {
-    super(type, value, encoder, encoding, binaryField, false);
+    super(type, value, encoder, encoding, binaryField);
 
     if (value instanceof byte[]) {
       length = ((byte[]) value).length;
