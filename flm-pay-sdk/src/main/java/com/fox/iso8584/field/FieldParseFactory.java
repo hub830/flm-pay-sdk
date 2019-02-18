@@ -97,8 +97,6 @@ public class FieldParseFactory {
       case LLLBIN:
         fieldParse = LllbinParse.getInstance();
         break;
-      case LLLBIN2:
-        break;
       case LLLLBCDBIN:
         break;
       case LLLLBIN:

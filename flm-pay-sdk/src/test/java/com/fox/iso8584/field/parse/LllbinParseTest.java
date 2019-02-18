@@ -12,7 +12,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldType;
-import com.fox.iso8584.field.value.LllBin2VarValue;
+import com.fox.iso8584.field.value.LllBinVarValue;
 
 @RunWith(JUnitPlatform.class)
 @DisplayName("二进制字段解析测试用例")
@@ -35,14 +35,14 @@ class LllbinParseTest {
         "9F2608DD5BC16A368E26829F2701809F101307050103A00000010A010000000000E54570769F3704DB9246219F36020096950500000000009A031901249C01009F02060000002700005F2A02015682027C009F1A0201569F03060000000000009F3303E0E1C89F34033F00009F3501229F1E0830303030303034388408A0000003330101029F0902008C9F410400000016";
     buf = Hex.decodeHex(value);
     encoding = "GBK";
-    fieldParseInfo = new FieldParseInfo(FieldType.LLLBIN2, 0, true);
+    fieldParseInfo = new FieldParseInfo(FieldType.LLLBIN, 0, true);
     pos = 261;
   }
 
   @Test
   void testParse() throws UnsupportedEncodingException, ParseException {
-    LllBin2VarValue<Object> fieldValue =
-        (LllBin2VarValue<Object>) lllbin2Parse.parse(fieldParseInfo, buf, pos, null, encoding);
+    LllBinVarValue<Object> fieldValue =
+        (LllBinVarValue<Object>) lllbin2Parse.parse(fieldParseInfo, buf, pos, null, encoding);
     assertNotNull(fieldValue);
     assertEquals(field55, fieldValue.toString());
   }

@@ -23,7 +23,6 @@ import com.fox.iso8584.field.value.BinaryValue;
 import com.fox.iso8584.field.value.Date10Value;
 import com.fox.iso8584.field.value.Date4Value;
 import com.fox.iso8584.field.value.DateExpValue;
-import com.fox.iso8584.field.value.LllBin2VarValue;
 import com.fox.iso8584.field.value.LllBinVarValue;
 import com.fox.iso8584.field.value.LllvarValue;
 import com.fox.iso8584.field.value.LlvarValue;
@@ -105,8 +104,6 @@ public class FieldFactory {
         break;
       case LLLBIN:
         return new LllBinVarValue<T>(value, encoder, encoding, binaryField);
-      case LLLBIN2:
-        return new LllBin2VarValue<T>(value, encoder, encoding, binaryField);
       case LLLLBCDBIN:
         break;
       case LLLLBIN:

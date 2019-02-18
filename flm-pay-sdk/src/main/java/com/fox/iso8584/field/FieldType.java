@@ -28,8 +28,6 @@ public enum FieldType {
   LLBIN,
   /** Similar to LLLVAR but holds byte arrays instead of strings. */
   LLLBIN,
-  /** Similar to LLLVAR but holds byte arrays instead of strings. 长度部分为十进制数*/
-  LLLBIN2,
   /** variable length with 4-digit header length. */
   LLLLVAR,
   /** variable length byte array with 4-digit header length. */

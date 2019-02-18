@@ -16,7 +16,7 @@ import com.fox.iso8584.field.FieldValue;
 @RunWith(JUnitPlatform.class)
 @DisplayName("三位变长二进制字段格式化测试用例")
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
-class LllBin2VarValueTest {
+class LllBinVarValueTest {
 
   private String value;
   private String encoding;
@@ -34,7 +34,7 @@ class LllBin2VarValueTest {
 
   @Test
   void testFormat() throws UnsupportedEncodingException {
-    LllBin2VarValue lllBin2VarValue = new LllBin2VarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
     assertNotNull(lllBin2VarValue);
  
     byte[] format = lllBin2VarValue.format();
@@ -45,7 +45,7 @@ class LllBin2VarValueTest {
   
   @Test
   void testWriteData() throws IOException {
-    LllBin2VarValue lllBin2VarValue = new LllBin2VarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
     assertNotNull(lllBin2VarValue);
 
     ByteArrayOutputStream bout = new ByteArrayOutputStream();    
@@ -58,7 +58,7 @@ class LllBin2VarValueTest {
 
   @Test
   void testGetValueLength() {
-    LllBin2VarValue lllBin2VarValue = new LllBin2VarValue(value, encoder, encoding, true);
+    LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder, encoding, true);
     assertNotNull(lllBin2VarValue);
 
     int valueLength = lllBin2VarValue.getValueLength();
