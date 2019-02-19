@@ -15,6 +15,8 @@
  */
 package com.fox.iso8584;
 
+import com.fox.iso8584.exception.FieldValueDecodeEncodeException;
+
 /**
  * Defines the behavior for a custom field value encoder/decoder
  * 
@@ -22,7 +24,7 @@ package com.fox.iso8584;
  */
 public interface CustomField<T> {
 
-  T decodeField(String value, String charset);
+  T decodeField(String value, String charset) throws FieldValueDecodeEncodeException;
 
-  String encodeField(T value, String charset);
+  String encodeField(T value, String charset) throws FieldValueDecodeEncodeException;
 }

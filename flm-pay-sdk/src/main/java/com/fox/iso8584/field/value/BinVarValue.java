@@ -1,7 +1,7 @@
 package com.fox.iso8584.field.value;
 
-import java.io.UnsupportedEncodingException;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueFormatException;
 import com.fox.iso8584.field.FieldType;
 import com.solab.iso8583.util.HexCodec;
 
@@ -24,7 +24,7 @@ public abstract class BinVarValue<T> extends VarValue<T> {
   }
 
   @Override
-  protected byte[] format(String charset) throws UnsupportedEncodingException {
+  protected byte[] format(String charset) throws FieldValueFormatException {
     byte[] v;
     v = formatBinary();
     return v;

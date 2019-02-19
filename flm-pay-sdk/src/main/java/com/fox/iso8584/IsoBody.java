@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 import java.util.Map;
+import com.fox.iso8584.exception.FieldValueWriteException;
 import com.fox.iso8584.field.FieldValue;
 
 /**
@@ -165,7 +166,7 @@ public class IsoBody {
     return false;
   }
 
-  public byte[] writeData(String charset) throws UnsupportedEncodingException, IOException {
+  public byte[] writeData(String charset) throws FieldValueWriteException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
     byte[] bitmap = writeBinBitmap();
@@ -192,7 +193,7 @@ public class IsoBody {
    * @throws IOException
    * @throws UnsupportedEncodingException
    */
-  byte[] writeBody(String charset) throws UnsupportedEncodingException, IOException {
+  byte[] writeBody(String charset) throws FieldValueWriteException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     // Fields
     for (int i = 2; i < 129; i++) {

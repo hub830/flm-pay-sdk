@@ -1,8 +1,7 @@
 package com.fox.iso8584.field.parse;
 
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueParseException;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
@@ -19,8 +18,8 @@ public class AlphaParse extends FieldParse {
   }
 
   @Override
-  public <T> FieldValue<?>  parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
-      String encoding) throws ParseException, UnsupportedEncodingException {
+  public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
+      String encoding) throws FieldValueParseException {
     int length = fpi.getLength();
     try {
       String _v = new String(buf, pos, length, encoding);
@@ -32,14 +31,8 @@ public class AlphaParse extends FieldParse {
         AlphaValue<?> alphaValue = new AlphaValue<>(decoded, custom, length);
         return alphaValue;
       }
-    } catch (StringIndexOutOfBoundsException ex) {
-      throw new ParseException(String.format("Insufficient data for %s  of length %d, pos %d",
-          fpi.getType(), length, pos), pos);
+    } catch (Exception e) {
+      throw new FieldValueParseException(e);
     }
-
-
   }
-
-
-
 }

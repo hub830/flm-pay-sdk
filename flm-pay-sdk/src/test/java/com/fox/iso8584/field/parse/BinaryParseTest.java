@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import com.fox.iso8584.exception.FieldValueParseException;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldType;
 import com.fox.iso8584.field.value.BinaryValue;
@@ -36,7 +37,7 @@ class BinaryParseTest {
   }
 
   @Test
-  void testParse() throws UnsupportedEncodingException, ParseException {
+  void testParse() throws FieldValueParseException     {
     BinaryValue<Object> fieldValue =
         (BinaryValue<Object>) binaryParse.parse(fieldParseInfo, buf, pos, null, encoding);
     assertNotNull(fieldValue);

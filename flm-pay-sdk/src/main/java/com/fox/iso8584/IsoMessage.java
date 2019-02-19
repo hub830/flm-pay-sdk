@@ -18,11 +18,12 @@ package com.fox.iso8584;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.commons.codec.binary.Hex;
+import com.fox.iso8584.exception.FieldValueWriteException;
 
 public class IsoMessage {
 
   public final static int REQUEST_TYPE_LENGTH = 4;
-  
+
   /** The message type. */
   protected int type;
 
@@ -76,30 +77,34 @@ public class IsoMessage {
    * 
    * @throws IOException
    */
-  public byte[] writeData(String charset) throws IOException {
+  public byte[] writeData(String charset) throws FieldValueWriteException {
 
-    byte[] bodyData = isoBody.writeData(charset);
+    try {
+      byte[] bodyData = isoBody.writeData(charset);
 
-    int totalLength = bodyData.length + IsoHeader.HEAD_LENGTH + REQUEST_TYPE_LENGTH;
-    // 设置报文总长度
-    isoHeader.setTotalLengtn(totalLength);
-    /*
-     * 开始组装报文
-     */
-    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    // 输出 报文长度
-    // bout.write(totalLength);
-    String mesageLength = String.format("%04d", totalLength);
-    bout.write(
-        Hex.encodeHexString(mesageLength.getBytes(encoding)).toUpperCase().getBytes(encoding));
-    // 输出 报文头
-    bout.write(Hex.encodeHexString(isoHeader.writeData(charset)).toUpperCase().getBytes());
-    // 输出 报文类型
-    String messageType = String.format("%04x", type);
-    bout.write(
-        Hex.encodeHexString(messageType.getBytes(encoding)).toUpperCase().getBytes(encoding));
-    // 位图 + 报文体
-    bout.write(Hex.encodeHexString(bodyData).toUpperCase().getBytes());
-    return bout.toByteArray();
+      int totalLength = bodyData.length + IsoHeader.HEAD_LENGTH + REQUEST_TYPE_LENGTH;
+      // 设置报文总长度
+      isoHeader.setTotalLengtn(totalLength);
+      /*
+       * 开始组装报文
+       */
+      ByteArrayOutputStream bout = new ByteArrayOutputStream();
+      // 输出 报文长度
+      // bout.write(totalLength);
+      String mesageLength = String.format("%04d", totalLength);
+      bout.write(
+          Hex.encodeHexString(mesageLength.getBytes(encoding)).toUpperCase().getBytes(encoding));
+      // 输出 报文头
+      bout.write(Hex.encodeHexString(isoHeader.writeData(charset)).toUpperCase().getBytes());
+      // 输出 报文类型
+      String messageType = String.format("%04x", type);
+      bout.write(
+          Hex.encodeHexString(messageType.getBytes(encoding)).toUpperCase().getBytes(encoding));
+      // 位图 + 报文体
+      bout.write(Hex.encodeHexString(bodyData).toUpperCase().getBytes());
+      return bout.toByteArray();
+    } catch (IOException e) {
+      throw new FieldValueWriteException(e);
+    }
   }
 }

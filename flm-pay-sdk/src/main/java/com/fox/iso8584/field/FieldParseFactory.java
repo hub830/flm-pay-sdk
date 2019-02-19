@@ -15,12 +15,11 @@
  */
 package com.fox.iso8584.field;
 
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.util.List;
 import com.fox.iso8584.CustomField;
 import com.fox.iso8584.codecs.CompositeField;
 import com.fox.iso8584.exception.FieldTypeNotSupportException;
+import com.fox.iso8584.exception.FieldValueParseException;
 import com.fox.iso8584.field.parse.AlphaParse;
 import com.fox.iso8584.field.parse.AmountParse;
 import com.fox.iso8584.field.parse.BinaryParse;
@@ -44,7 +43,7 @@ public class FieldParseFactory {
       int pos, //
       CustomField<?>  custom, //
       String encoding//
-  ) throws ParseException, UnsupportedEncodingException {
+  ) throws FieldValueParseException {
 
     FieldParse fieldParse = getField(fpi.getType());
     FieldValue<?>  field;

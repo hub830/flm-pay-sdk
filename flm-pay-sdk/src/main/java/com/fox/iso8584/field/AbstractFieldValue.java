@@ -1,13 +1,15 @@
 package com.fox.iso8584.field;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueDecodeEncodeException;
+import com.fox.iso8584.exception.FieldValueFormatException;
+import com.fox.iso8584.exception.FieldValueWriteException;
 
-public abstract class AbstractFieldValue<T> implements FieldValue<T> , Cloneable  {
+public abstract class AbstractFieldValue<T> implements FieldValue<T>, Cloneable {
 
   private static Logger log = LoggerFactory.getLogger(AbstractFieldValue.class);
 
@@ -47,9 +49,11 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> , Cloneable
 
   /**
    * 对于不可变长字段，值 的长度直接为其定义时设置的长度
+   * 
+   * @throws FieldValueDecodeEncodeException
    */
   @Override
-  public int getValueLength(String charset) {
+  public int getValueLength(String charset) throws FieldValueDecodeEncodeException{
     return length;
   }
 
@@ -61,14 +65,21 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> , Cloneable
    * @return
    * @throws UnsupportedEncodingException
    */
-  protected abstract byte[] format(String charset) throws UnsupportedEncodingException;
+  protected abstract byte[] format(String charset) throws FieldValueFormatException;
 
   @Override
-  public void write(OutputStream out, String charset)
-      throws UnsupportedEncodingException, IOException {
-    byte[] data =
-        encoder == null ? format(charset) : encoder.encodeField(value, charset).getBytes();
-    out.write(data);
+  public void write(OutputStream out, String charset) throws FieldValueWriteException {
+    byte[] data;
+    try {
+      if (encoder == null) {
+        data = format(charset);
+      } else {
+        data = encoder.encodeField(value, charset).getBytes();
+      }
+      out.write(data);
+    } catch (Exception e) {
+      throw new FieldValueWriteException(e);
+    }
   }
 
   /** Returns a copy of the receiver that references the same value object. */

@@ -41,7 +41,7 @@ class LlvarParseTest {
   }
 
   @Test
-  void testParse() throws UnsupportedEncodingException, ParseException {
+  void testParse() throws  Exception {
     LlvarValue<Object> fieldValue =
         (LlvarValue<Object>) llvarParse.parse(fieldParseInfo, buf, pos, null, encoding);
     assertNotNull(fieldValue);

@@ -33,7 +33,7 @@ class LllBinVarValueTest {
   }
 
   @Test
-  void testFormat() throws UnsupportedEncodingException {
+  void testFormat() throws  Exception {
     LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder);
     assertNotNull(lllBin2VarValue);
  
@@ -44,7 +44,7 @@ class LllBinVarValueTest {
   }
   
   @Test
-  void testWriteData() throws IOException {
+  void testWriteData() throws  Exception {
     LllBinVarValue lllBin2VarValue = new LllBinVarValue(value, encoder);
     assertNotNull(lllBin2VarValue);
 

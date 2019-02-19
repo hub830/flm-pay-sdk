@@ -55,7 +55,7 @@ class MessageFactoryTest {
   }
 
   @Test
-  void testNewMessage() throws DecoderException, IOException {
+  void testNewMessage() throws  Exception {
 
     IsoMessage m = messageFactory.newMessage(0x200);
     initBody(m.getIsoBody());
@@ -67,7 +67,7 @@ class MessageFactoryTest {
   }
 
   @Test
-  void testParseMessage() throws DecoderException, ParseException, IOException {
+  void testParseMessage() throws  Exception {
 
     System.err.println("PARSE BINARY FROM FILE");
     byte[] buf = Hex.decodeHex(bodyMessage);

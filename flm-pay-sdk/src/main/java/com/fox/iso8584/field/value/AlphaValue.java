@@ -2,6 +2,7 @@ package com.fox.iso8584.field.value;
 
 import java.io.UnsupportedEncodingException;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueFormatException;
 import com.fox.iso8584.field.AbstractFieldValue;
 import com.fox.iso8584.field.FieldType;
 
@@ -19,21 +20,25 @@ public class AlphaValue<T> extends AbstractFieldValue<T> {
   }
 
   @Override
-  protected byte[] format(String charset) throws UnsupportedEncodingException {
+  protected byte[] format(String charset) throws FieldValueFormatException {
     String v;
     if (value == null) {
       v = "";
     } else {
       v = value.toString();
     }
-    if (v.length() > length) {
-      v = v.substring(0, length);
-    } else if (v.length() != length) {
-      // 如果值包含中文的话，格式化出来的值 长度可能 不正确，需要做特殊处理
-      v = String.format(String.format("%%-%ds", length), v);
-      v = chineseSubString(v, length, charset);
+    try {
+      if (v.length() > length) {
+        v = v.substring(0, length);
+      } else if (v.length() != length) {
+        // 如果值包含中文的话，格式化出来的值 长度可能 不正确，需要做特殊处理
+        v = String.format(String.format("%%-%ds", length), v);
+        v = chineseSubString(v, length, charset);
+      }
+      return v.getBytes(charset);
+    } catch (UnsupportedEncodingException e) {
+      throw new FieldValueFormatException(e);
     }
-    return v.getBytes(charset);
   }
 
   /**
@@ -45,15 +50,12 @@ public class AlphaValue<T> extends AbstractFieldValue<T> {
    * 
    * @throws UnsupportedEncodingException
    */
-  private static String chineseSubString(String s, int num, String charset) {
-    try {
-      int changdu = s.getBytes(charset).length;
-      if (changdu > num) {
-        s = s.substring(0, s.length() - 1);
-        s = chineseSubString(s, num, charset);
-      }
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+  private static String chineseSubString(String s, int num, String charset)
+      throws UnsupportedEncodingException {
+    int changdu = s.getBytes(charset).length;
+    if (changdu > num) {
+      s = s.substring(0, s.length() - 1);
+      s = chineseSubString(s, num, charset);
     }
     return s;
   }

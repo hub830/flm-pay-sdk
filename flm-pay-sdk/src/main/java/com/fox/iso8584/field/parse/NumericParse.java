@@ -1,8 +1,7 @@
 package com.fox.iso8584.field.parse;
 
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueParseException;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
@@ -18,11 +17,8 @@ public class NumericParse extends FieldParse {
     return INSTANCE;
   }
 
-
   public <T> FieldValue<?> parse(FieldParseInfo fpi, final byte[] buf, final int pos,
-      final CustomField<T> custom, String encoding)
-      throws ParseException, UnsupportedEncodingException {
-
+      final CustomField<T> custom, String encoding) throws FieldValueParseException {
 
     int length = fpi.getLength();
 
@@ -36,15 +32,12 @@ public class NumericParse extends FieldParse {
         return numericValue;
       } else {
         T decoded = custom.decodeField(_v, encoding);
-
         NumericValue<?> numericValue = new NumericValue<>(decoded, custom, length);
         return numericValue;
       }
-    } catch (StringIndexOutOfBoundsException ex) {
-      throw new ParseException(String.format("Insufficient data for %s  of length %d, pos %d",
-          fpi.getType(), length, pos), pos);
+    } catch (Exception e) {
+      throw new FieldValueParseException(e);
     }
-
   }
 
 }

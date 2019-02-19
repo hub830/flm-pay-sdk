@@ -16,8 +16,6 @@
 package com.fox.iso8584;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fox.iso8584.exception.MessageParseException;
 import com.fox.iso8584.field.FieldFactory;
 import com.fox.iso8584.field.FieldParseFactory;
 import com.fox.iso8584.field.FieldParseInfo;
@@ -180,10 +179,10 @@ public class MessageFactory {
    *        the rest of the message must come.
    */
   public IsoMessage parseMessage(byte[] buf, int isoHeaderLength, String charset)
-      throws ParseException, UnsupportedEncodingException {
+      throws MessageParseException {
     final int minlength = isoHeaderLength + 4;
     if (buf.length < minlength) {
-      throw new ParseException("Insufficient buffer length, needs to be at least " + minlength, 0);
+      throw new MessageParseException("Insufficient buffer length, needs to be at least " + minlength);
     }
 
     final int type;
@@ -200,13 +199,10 @@ public class MessageFactory {
     Map<Integer, FieldParseInfo> parseGuide = parseMap.get(type);
     List<Integer> index = parseOrder.get(type);
     if (index == null) {
-      log.error(
+
+      throw new MessageParseException(
           String.format("ISO8583 MessageFactory has no parsing guide for message type %04x [%s]",
               type, new String(buf)));
-      throw new ParseException(
-          String.format("ISO8583 MessageFactory has no parsing guide for message type %04x [%s]",
-              type, new String(buf)),
-          0);
     }
     // First we check if the message contains fields not specified in the parsing template
     boolean abandon = false;
@@ -219,21 +215,22 @@ public class MessageFactory {
       }
     }
     if (abandon) {
-      throw new ParseException("ISO8583 MessageFactory cannot parse fields", 0);
+      throw new MessageParseException("ISO8583 MessageFactory cannot parse fields");
     }
     // Now we parse each field
+    try {
+      for (Integer i : index) {
+        FieldParseInfo fpi = parseGuide.get(i);
+        if (bs.get(i - 1)) {
+          CustomField<?> decoder = getCustomField(i);
 
-    for (Integer i : index) {
-      FieldParseInfo fpi = parseGuide.get(i);
-      if (bs.get(i - 1)) {
-        CustomField<?> decoder = getCustomField(i);
-
-        FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, charset);
-        body.setField(i, field);
-
-        pos += field.getValueLength(charset);
+          FieldValue<?> field = FieldParseFactory.parse(fpi, buf, pos, decoder, charset);
+          body.setField(i, field);
+          pos += field.getValueLength(charset);
+        }
       }
-
+    } catch (Exception e) {
+      throw new MessageParseException(e);
     }
 
     final IsoMessage message = new IsoMessage(type);
@@ -241,7 +238,7 @@ public class MessageFactory {
     return message;
   }
 
-  private int parseBinBitmap(BitSet bs, byte[] buf, int isoHeaderLength) throws ParseException {
+  private int parseBinBitmap(BitSet bs, byte[] buf, int isoHeaderLength) throws MessageParseException {
 
     final int minlength = isoHeaderLength + 4 + 8;
     // final BitSet bs = new BitSet(64);
@@ -257,7 +254,7 @@ public class MessageFactory {
     // Check for secondary bitmap and parse if necessary
     if (bs.get(0)) {
       if (buf.length < minlength + 8) {
-        throw new ParseException("Insufficient length for secondary bitmap", minlength);
+        throw new MessageParseException("Insufficient length for secondary bitmap");
       }
       for (int i = 8 + bitmapStart; i < 16 + bitmapStart; i++) {
         int bit = 128;

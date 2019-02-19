@@ -16,14 +16,10 @@
 package com.fox.iso8584.codecs;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueDecodeEncodeException;
 import com.fox.iso8584.field.FieldParseFactory;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
@@ -36,7 +32,6 @@ import com.fox.iso8584.field.FieldValue;
  */
 public class CompositeField implements CustomField<CompositeField> {
 
-  private static final Logger log = LoggerFactory.getLogger(CompositeField.class);
   /** Stores the subfields. */
   @SuppressWarnings("rawtypes")
   private List<FieldValue> values;
@@ -72,7 +67,7 @@ public class CompositeField implements CustomField<CompositeField> {
     FieldValue<T> v = getField(idx);
     return v == null ? null : v.getValue();
   }
- 
+
 
   public CompositeField addParser(FieldParseInfo fpi) {
     if (parsers == null) {
@@ -83,7 +78,8 @@ public class CompositeField implements CustomField<CompositeField> {
   }
 
   @Override
-  public CompositeField decodeField(String value, String charset) {
+  public CompositeField decodeField(String value, String charset)
+      throws FieldValueDecodeEncodeException {
     @SuppressWarnings("rawtypes")
     List<FieldValue> vals = new ArrayList<>(parsers.size());
     byte[] buf = value.getBytes();
@@ -99,26 +95,23 @@ public class CompositeField implements CustomField<CompositeField> {
       final CompositeField f = new CompositeField();
       f.setValues(vals);
       return f;
-    } catch (ParseException | UnsupportedEncodingException ex) {
-      log.error("Decoding CompositeField", ex);
-      return null;
+    } catch (Exception e) {
+      throw new FieldValueDecodeEncodeException(e);
     }
   }
 
 
   @Override
-  public String encodeField(CompositeField value, String charset) {
+  public String encodeField(CompositeField value, String charset) throws FieldValueDecodeEncodeException {
     try {
-      String encoding = null;
       final ByteArrayOutputStream bout = new ByteArrayOutputStream();
       for (FieldValue<?> v : value.getValues()) {
-        v.write(bout,charset);
+        v.write(bout, charset);
       }
       final byte[] buf = bout.toByteArray();
-      return new String(buf, encoding == null ? "UTF-8" : charset);
-    } catch (IOException ex) {
-      log.error("Encoding text CompositeField", ex);
-      return "";
+      return new String(buf, charset);
+    } catch (Exception e) {
+      throw new FieldValueDecodeEncodeException(e);
     }
   }
 

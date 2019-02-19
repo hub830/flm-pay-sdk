@@ -17,7 +17,7 @@ package com.fox.iso8584;
 
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import com.fox.iso8584.exception.FieldValueWriteException;
 import com.fox.iso8584.field.FieldValue;
 import com.fox.iso8584.field.value.AlphaValue;
 import com.fox.iso8584.field.value.BinaryValue;
@@ -30,9 +30,7 @@ public class IsoHeader {
   /** This is where the values are stored. */
   @SuppressWarnings("rawtypes")
   protected FieldValue[] fields = new FieldValue[10];
-  protected boolean forceStringEncoding;
-
-
+  
   /** Creates a new empty message with no values set. */
   public IsoHeader(String sourceStationId, String destinationId) {
     byte[] headerLength = {HEAD_LENGTH};
@@ -57,18 +55,14 @@ public class IsoHeader {
     fields[2] = new NumericValue<Integer>(length, null, 4);// 域3 报文总长度 需要在输出数据时才能计算出来
   }
 
-  public byte[] writeData(String charset) {
+  public byte[] writeData(String charset) throws FieldValueWriteException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
     // Fields
     for (int i = 0; i < 10; i++) {
       FieldValue<?> v = fields[i];
       if (v != null) {
-        try {
           v.write(bout, charset);
-        } catch (IOException ex) {
-          // should never happen, writing to a ByteArrayOutputStream
-        }
       }
     }
     return bout.toByteArray();

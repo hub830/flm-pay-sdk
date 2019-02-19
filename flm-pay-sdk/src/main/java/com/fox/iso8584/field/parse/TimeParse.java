@@ -1,9 +1,8 @@
 package com.fox.iso8584.field.parse;
 
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.util.Calendar;
 import com.fox.iso8584.CustomField;
+import com.fox.iso8584.exception.FieldValueParseException;
 import com.fox.iso8584.field.FieldParse;
 import com.fox.iso8584.field.FieldParseInfo;
 import com.fox.iso8584.field.FieldValue;
@@ -21,7 +20,7 @@ public class TimeParse extends FieldParse {
 
   @Override
   public <T> FieldValue<?> parse(FieldParseInfo fpi, byte[] buf, int pos, CustomField<T> custom,
-      String encoding) throws ParseException, UnsupportedEncodingException {
+      String encoding) throws FieldValueParseException {
 
     Calendar cal = Calendar.getInstance();
 

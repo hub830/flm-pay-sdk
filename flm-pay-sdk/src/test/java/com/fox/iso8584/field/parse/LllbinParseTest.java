@@ -40,7 +40,7 @@ class LllbinParseTest {
   }
 
   @Test
-  void testParse() throws UnsupportedEncodingException, ParseException {
+  void testParse() throws  Exception {
     LllBinVarValue<Object> fieldValue =
         (LllBinVarValue<Object>) lllbin2Parse.parse(fieldParseInfo, buf, pos, null, encoding);
     assertNotNull(fieldValue);
