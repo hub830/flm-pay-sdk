@@ -15,6 +15,8 @@ public class PayProperties {
 
   private int workGroupSize;
 
+  private String fieldCharset = "GBK";
+  
   /**
    * 报文头域5 源ID 11位定长数字字符数据 标识报文发送者，但并不一定是原始交易数据的收集者
    */

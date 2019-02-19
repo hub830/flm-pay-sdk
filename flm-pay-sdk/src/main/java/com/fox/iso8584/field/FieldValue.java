@@ -37,15 +37,6 @@ public interface FieldValue<T> {
    */
   int getLength();
 
-
-  /**
-   * 获取字符 集
-   * 
-   * @return
-   */
-  // String getEncoding();
-
-
   /**
    * 获取自定义的编码集
    * 

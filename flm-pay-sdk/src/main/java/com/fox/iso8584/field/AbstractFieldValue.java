@@ -3,9 +3,13 @@ package com.fox.iso8584.field;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fox.iso8584.CustomField;
 
-public abstract class AbstractFieldValue<T> implements FieldValue<T> {
+public abstract class AbstractFieldValue<T> implements FieldValue<T> , Cloneable  {
+
+  private static Logger log = LoggerFactory.getLogger(AbstractFieldValue.class);
 
   protected FieldType type;
 
@@ -15,10 +19,6 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
 
   protected int length;
 
-  // protected String encoding;
-
-  // protected boolean binary;
-
   public AbstractFieldValue() {}
 
   public AbstractFieldValue(FieldType type, T value, CustomField<T> encoder, int length) {
@@ -27,8 +27,6 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
     this.value = value;
     this.encoder = encoder;
     this.length = length;
-    // this.encoding = encoding;
-    // this.binary = binary;
   }
 
   public FieldType getType() {
@@ -46,11 +44,6 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
   public int getLength() {
     return length;
   }
-  /*
-   * @Override public String getEncoding() { return encoding; }
-   * 
-   * public boolean isBinary() { return binary; }
-   */
 
   /**
    * 对于不可变长字段，值 的长度直接为其定义时设置的长度
@@ -84,6 +77,7 @@ public abstract class AbstractFieldValue<T> implements FieldValue<T> {
     try {
       return (FieldValue<T>) super.clone();
     } catch (CloneNotSupportedException ex) {
+      log.error("FieldValue clone 失败", ex);
       return null;
     }
   }
